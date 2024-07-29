@@ -17,7 +17,7 @@ public class App {
         Text textSegment = new Text();
         paragraphParser.setNextParser(sentenceParser);
         sentenceParser.setNextParser(wordParser);
-        paragraphParser.parse(textSegment,example);
+        paragraphParser.parse(textSegment, example);
         System.out.println(textSegment.getContent());
     }
 }
