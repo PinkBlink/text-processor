@@ -1,9 +1,9 @@
 package org.text.processor;
 
 import org.apache.logging.log4j.Logger;
-import org.text.processor.action.ParagraphParser;
-import org.text.processor.action.SentenceParser;
-import org.text.processor.action.WordParser;
+import org.text.processor.action.parser.ParagraphParser;
+import org.text.processor.action.parser.SentenceParser;
+import org.text.processor.action.parser.WordParser;
 import org.text.processor.constants.TextConstants;
 import org.text.processor.entity.Text;
 import org.apache.logging.log4j.Level;
@@ -25,7 +25,6 @@ public class App {
             sentenceParser.setNextParser(wordParser);
             paragraphParser.parse(textSegment, example);
             LOGGER.log(Level.INFO, TextConstants.LINE_BREAK_SEPARATOR + textSegment.getContent());
-
         } catch (NoFileException e) {
             LOGGER.log(Level.ERROR, e.getMessage());
         }

@@ -1,4 +1,4 @@
-package org.text.processor.action;
+package org.text.processor.action.parser;
 
 import org.text.processor.entity.TextSegment;
 
