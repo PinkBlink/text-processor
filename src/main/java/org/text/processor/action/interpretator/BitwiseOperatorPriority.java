@@ -7,7 +7,7 @@ public enum BitwiseOperatorPriority {
     AND(3),
     XOR(2),
     OR(1);
-    private int priority;
+    private final int priority;
 
     public int getPriority() {
         return priority;
