@@ -1,16 +1,36 @@
 package org.text.processor.utils;
 
+import org.text.processor.action.interpretator.Expression;
+import org.text.processor.action.interpretator.NotExpression;
 import org.text.processor.constants.TextConstants;
 
 import java.util.regex.Pattern;
 
 public class BitwiseOperationUtils {
-    //~6&9|(3&4)
-    public static String getSolvedExpression(String expression) {
-        while (hasBrackets(expression)) {
+    //!!!
 
+    private static String replaceAllNot(String expression) {
+        while (TextValidator.isContainSymbol('~', expression)) {
+            expression = replaceNot(expression);
         }
-        return "need implementation";
+        return expression;
+    }
+
+    private static String replaceNot(String expression) {
+        int operatorIndex = expression.indexOf('~');
+        int number = getRightNumber(expression, operatorIndex, false);
+        int lastIndex = getExtremeIndexOfRightNumber(expression, operatorIndex) + 1;
+        Expression notExpr = new NotExpression(number);
+        String calculatedNot = String.valueOf(notExpr.interpret());
+        String result = replace(expression, operatorIndex, lastIndex, calculatedNot);
+        return result;
+    }
+
+    private static String replace(String expression, int startIndex, int endIndex, String replacement) {
+        String result = expression.substring(0, startIndex)
+                .concat(replacement)
+                .concat(expression.substring(endIndex));
+        return result;
     }
 
 
@@ -42,6 +62,7 @@ public class BitwiseOperationUtils {
         return -1;
     }
 
+    //!!!
     private static String replaceBracketToNumber(String expression, int leftBracketIndex, int rightBracketIndex) {
         int startIndex = leftBracketIndex + 1;
         String expressionFromBrackets = getExpressionFromBrackets(expression, leftBracketIndex, rightBracketIndex);
@@ -53,46 +74,55 @@ public class BitwiseOperationUtils {
         return expression.substring(startIndex, rightBracketIndex);
     }
 
-    private static int applyNot(String expression) {
-        int operatorIndex = expression.indexOf("~");
-
-        return 0;
+    private static int getRightNumber(String expression, int operatorIndex, boolean isShift) {
+        if (isShift) {
+            operatorIndex++;
+        }
+        int firstIndexOfNumber = operatorIndex + 1;
+        int lastIndexOfNumber = getExtremeIndexOfRightNumber(expression, operatorIndex);
+        return Integer.parseInt(expression.substring(firstIndexOfNumber, lastIndexOfNumber + 1));
     }
 
-    private int getRightNumber(String expression, int operatorIndex) {
-        StringBuilder result = new StringBuilder();
+    private static int getLeftNumber(String expression, int operatorIndex) {
+        int firstIndexOfNumber = getExtremeIndexOfLeftNumber(expression, operatorIndex);
+        return Integer.parseInt(expression.substring(firstIndexOfNumber, operatorIndex));
+    }
+
+    public static int getExtremeIndexOfRightNumber(String expression, int operatorIndex) {
         int charIndex = operatorIndex + 1;
-        char currentChar = expression.charAt(charIndex);
-
-        while (charIndex < expression.length() && Character.isDigit(currentChar)) {
-            result.append(currentChar);
-            charIndex++;
+        char currentChar;
+        while (charIndex < expression.length()) {
+            currentChar = expression.charAt(charIndex);
+            if (TextValidator.isDigit(currentChar) || currentChar == TextConstants.NEGATIVE_SIGN) {
+                charIndex++;
+            } else {
+                break;
+            }
         }
-        return Integer.parseInt(result.toString());
+        return charIndex - 1;
     }
 
-    private int getLeftNumber(String expression, int operatorIndex) {
-        StringBuilder result = new StringBuilder();
+    public static int getExtremeIndexOfLeftNumber(String expression, int operatorIndex) {
         int charIndex = operatorIndex - 1;
-        char currentChar = expression.charAt(charIndex);
-
-        while (charIndex > -1 && Character.isDigit(currentChar)) {
-            result.append(currentChar);
-            charIndex--;
+        char currentChar;
+        while (charIndex >= 0) {
+            currentChar = expression.charAt(charIndex);
+            if (TextValidator.isDigit(currentChar) || currentChar == TextConstants.NEGATIVE_SIGN) {
+                charIndex--;
+            } else {
+                break;
+            }
         }
-        return Integer.parseInt(result.toString());
+        return charIndex + 1;
     }
 
     public static void main(String[] args) {
-        String testExpression = "~6&9|(3&4)";
-        String testBracketsIndices = "(7^5|1&2<<(2|5>>2&71))|1200";
-        System.out.println(hasBrackets(testExpression));
-        int[] indices = findInnermostBrackets(testBracketsIndices);
-        int left = indices[0];
-        int right = indices[1];
-
-//        System.out.println("Should be 10 for left index and 20 for right index");
-//        System.out.println("left-->" + indices[0] + " right-->" + indices[1]);
-//        System.out.println(getExpressionFromBrackets(testBracketsIndices, left, right));
+        String testExpression1 = "13<<2";
+        String testExpression2 = "3>>5";
+        String testExpression3 = "~6&9|(3&4)";
+        String testExpression4 = "5|(1&2&(3|(4&(1^5|6&47)|3)|(~89&4|(42&7)))|1)";
+        String testExpression5 = "(~71&(2&3|(3|(2&1>>2|2)&2)|10&2))|78";
+        String testExpression6 = "(7^5|1&2<<(2|5>>2&71))|1200";
+        System.out.println(getLeftNumber(replaceAllNot(testExpression5),4));
     }
 }
