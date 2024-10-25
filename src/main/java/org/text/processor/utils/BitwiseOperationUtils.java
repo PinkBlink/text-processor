@@ -2,12 +2,12 @@ package org.text.processor.utils;
 
 import org.text.processor.action.interpretator.Expression;
 import org.text.processor.action.interpretator.NotExpression;
+import org.text.processor.action.interpretator.NumberExpression;
 import org.text.processor.constants.TextConstants;
 
 import java.util.regex.Pattern;
 
 public class BitwiseOperationUtils {
-    //!!!
 
     private static String replaceAllNot(String expression) {
         while (TextValidator.isContainSymbol('~', expression)) {
@@ -19,8 +19,9 @@ public class BitwiseOperationUtils {
     private static String replaceNot(String expression) {
         int operatorIndex = expression.indexOf('~');
         int number = getRightNumber(expression, operatorIndex, false);
+        Expression numberExpression = new NumberExpression(number);
         int lastIndex = getExtremeIndexOfRightNumber(expression, operatorIndex) + 1;
-        Expression notExpr = new NotExpression(number);
+        Expression notExpr = new NotExpression(numberExpression);
         String calculatedNot = String.valueOf(notExpr.interpret());
         String result = replace(expression, operatorIndex, lastIndex, calculatedNot);
         return result;
@@ -123,6 +124,6 @@ public class BitwiseOperationUtils {
         String testExpression4 = "5|(1&2&(3|(4&(1^5|6&47)|3)|(~89&4|(42&7)))|1)";
         String testExpression5 = "(~71&(2&3|(3|(2&1>>2|2)&2)|10&2))|78";
         String testExpression6 = "(7^5|1&2<<(2|5>>2&71))|1200";
-        System.out.println(getLeftNumber(replaceAllNot(testExpression5),4));
+        System.out.println(5|(1&2&(3|(4&(1^5|6&47)|3)|(~89&4|(42&7)))|1));
     }
 }
