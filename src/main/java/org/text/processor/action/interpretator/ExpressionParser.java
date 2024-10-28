@@ -3,29 +3,16 @@ package org.text.processor.action.interpretator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.text.processor.constants.TextConstants;
 import org.text.processor.exception.IllegalExpressionException;
 import org.text.processor.utils.BitwiseOperationUtils;
 import org.text.processor.utils.TextValidator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class ExpressionParser {
-    //(7^5|1&2<<(2|5>>2&71))|1200
-    // 1)  "2 | 5 >> 2 & 71" :
-
-    // 1.1) 5 >> 2
-    // 1.2) [1.1] & 71
-    // 1.3) 2 | [1.2]
-
-    //2) 7 ^ 5 | 1 & 2<<[1.3] :
-
-    //2.1) 2 << [1.3]
-    //2.2) 1 & [2.1]
-    //2.3) 7 ^ 5
-    //2.4) [2.3] | [2.2]
-
-    //3) [2.4] | 1200
     private Logger logger = LogManager.getLogger(this.getClass());
     private List<Expression> numberExpressionList = new ArrayList<>();
     private final List<BitwiseOperator> operationExpressionsList = new ArrayList<>();
@@ -42,20 +29,6 @@ public class ExpressionParser {
     }
 
     private void parse() {
-        //~ 2 | 5 >> ~ 2 & 71
-        //0 1 2 3 45 6 7 8 9  <<indices
-
-        // ~2 5 ~2 71
-        // 0 1 2 3    <<indices
-
-        // | > &
-        // 0 1 2    <<indices
-
-        // vv
-
-        // | > &
-        // 0 1 2     <<indices
-
         int index = 0;
         int length = stringExpression.length();
         while (index < length) {
@@ -78,9 +51,8 @@ public class ExpressionParser {
                     if (operator.equals(BitwiseOperator.LEFT_SHIFT)
                             || operator.equals(BitwiseOperator.RIGHT_SHIFT)) {
                         index++;
-                    } else {
-                        addOperationToList(operator);
                     }
+                    addOperationToList(operator);
                 }
                 index++;
             }
@@ -117,40 +89,41 @@ public class ExpressionParser {
 
     public Expression getTheCollectedExpression() {
         this.parse();
-        while (numberExpressionList.size() > 1) {
-
+        for (int i = TextConstants.MAX_BITWISE_OPERATOR_PRIORITY; i > 0; i--) {
+            int indexOfOperator = getFirstIndexOfOperationInPriority(i);
+            while (indexOfOperator != -1) {
+                concatToOperationInList(indexOfOperator);
+                indexOfOperator = getFirstIndexOfOperationInPriority(i);
+            }
         }
         return numberExpressionList.getFirst();
     }
 
+    private void concatToOperationInList(int operatorIndex) {
+        BitwiseOperator operator = operationExpressionsList.get(operatorIndex);
+        Expression firstOperand = numberExpressionList.get(operatorIndex);
+        Expression secondOperand = numberExpressionList.get(operatorIndex + 1);
+        Expression resultExpression = operator.getExpression(firstOperand, secondOperand);
+        numberExpressionList.remove(operatorIndex + 1);
+        numberExpressionList.set(operatorIndex, resultExpression);
+        operationExpressionsList.remove(operatorIndex);
+    }
+
+    private int getFirstIndexOfOperationInPriority(int priority) {
+        int index = IntStream.range(0, operationExpressionsList.size())
+                .filter(i -> operationExpressionsList.get(i).getPriority() == priority)
+                .findFirst()
+                .orElse(-1);
+        return index;
+    }
+
+
     public static void main(String[] args) {
         ExpressionParser parser = new ExpressionParser("2|5>>2&71");
-        parser.parse();
-        System.out.println(parser.numberExpressionList);
-        System.out.println(parser.operationExpressionsList);
+        Expression expression = parser.getTheCollectedExpression();
+        System.out.println("should be:");
+        System.out.println(2|5>>2&71);
+        System.out.println("output:");
+        System.out.println(expression.interpret());
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
