@@ -1,6 +1,6 @@
 package org.text.processor.action.interpretator;
 
-public enum BitwiseOperatorPriority {
+public enum BitwiseOperator {
     NOT(5),
     LEFT_SHIFT(4),
     RIGHT_SHIFT(4),
@@ -13,7 +13,7 @@ public enum BitwiseOperatorPriority {
         return priority;
     }
 
-    BitwiseOperatorPriority(int priority) {
+    BitwiseOperator(int priority) {
         this.priority = priority;
     }
 }

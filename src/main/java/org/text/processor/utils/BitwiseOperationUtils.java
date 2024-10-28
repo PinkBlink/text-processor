@@ -1,39 +1,34 @@
 package org.text.processor.utils;
 
+import org.text.processor.action.interpretator.BitwiseOperator;
 import org.text.processor.action.interpretator.Expression;
 import org.text.processor.action.interpretator.NotExpression;
 import org.text.processor.action.interpretator.NumberExpression;
 import org.text.processor.constants.TextConstants;
+import org.text.processor.exception.IllegalExpressionException;
 
 import java.util.regex.Pattern;
 
 public class BitwiseOperationUtils {
 
-    private static String replaceAllNot(String expression) {
-        while (TextValidator.isContainSymbol('~', expression)) {
-            expression = replaceNot(expression);
-        }
-        return expression;
-    }
-
-    private static String replaceNot(String expression) {
-        int operatorIndex = expression.indexOf('~');
-        int number = getRightNumber(expression, operatorIndex, false);
-        Expression numberExpression = new NumberExpression(number);
-        int lastIndex = getExtremeIndexOfRightNumber(expression, operatorIndex) + 1;
-        Expression notExpr = new NotExpression(numberExpression);
-        String calculatedNot = String.valueOf(notExpr.interpret());
-        String result = replace(expression, operatorIndex, lastIndex, calculatedNot);
-        return result;
-    }
-
-    private static String replace(String expression, int startIndex, int endIndex, String replacement) {
+    //mb remove to test utils(need to create)
+    public static String replace(String expression, int startIndex, int endIndex, String replacement) {
         String result = expression.substring(0, startIndex)
                 .concat(replacement)
                 .concat(expression.substring(endIndex));
         return result;
     }
 
+    public static BitwiseOperator getBitwiseOperator(char operator) {
+        return switch (operator) {
+            case '~' -> BitwiseOperator.NOT;
+            case '>' -> BitwiseOperator.RIGHT_SHIFT;
+            case '<' -> BitwiseOperator.LEFT_SHIFT;
+            case '^' -> BitwiseOperator.XOR;
+            case '|' -> BitwiseOperator.OR;
+            default -> throw new IllegalExpressionException("Wrong bitwise operation: " + operator);
+        };
+    }
 
     private static boolean hasBrackets(String expression) {
         return Pattern.compile(TextConstants.BRACKETS_REGEX).matcher(expression).find();
@@ -124,6 +119,6 @@ public class BitwiseOperationUtils {
         String testExpression4 = "5|(1&2&(3|(4&(1^5|6&47)|3)|(~89&4|(42&7)))|1)";
         String testExpression5 = "(~71&(2&3|(3|(2&1>>2|2)&2)|10&2))|78";
         String testExpression6 = "(7^5|1&2<<(2|5>>2&71))|1200";
-        System.out.println(5|(1&2&(3|(4&(1^5|6&47)|3)|(~89&4|(42&7)))|1));
+        System.out.println(5 | (1 & 2 & (3 | (4 & (1 ^ 5 | 6 & 47) | 3) | (~89 & 4 | (42 & 7))) | 1));
     }
 }

@@ -7,4 +7,5 @@ public class TextConstants {
     public static final String SENTENCE_SEPARATOR_REGEX = "(?<=[.!?])\\s+";
     public static final String BRACKETS_REGEX = "\\([^\\)]*\\)";
     public static final char NEGATIVE_SIGN = '-';
+    public static final String EXPRESSION_REGEX = "^([0-9]*[()~&><^|]*){2,}$";
 }
