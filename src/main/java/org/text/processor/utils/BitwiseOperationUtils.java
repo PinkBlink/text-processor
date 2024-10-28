@@ -26,6 +26,7 @@ public class BitwiseOperationUtils {
             case '<' -> BitwiseOperator.LEFT_SHIFT;
             case '^' -> BitwiseOperator.XOR;
             case '|' -> BitwiseOperator.OR;
+            case '&' -> BitwiseOperator.AND;
             default -> throw new IllegalExpressionException("Wrong bitwise operation: " + operator);
         };
     }
