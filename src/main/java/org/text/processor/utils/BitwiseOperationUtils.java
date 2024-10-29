@@ -8,14 +8,6 @@ import java.util.regex.Pattern;
 
 public class BitwiseOperationUtils {
 
-    //mb remove to text utils(need to create)
-    public static String replace(String expression, int startIndex, int endIndex, String replacement) {
-        String result = expression.substring(0, startIndex)
-                .concat(replacement)
-                .concat(expression.substring(endIndex));
-        return result;
-    }
-
     public static BitwiseOperator getBitwiseOperator(char operator) {
         return switch (operator) {
             case '~' -> BitwiseOperator.NOT;
@@ -26,88 +18,6 @@ public class BitwiseOperationUtils {
             case '&' -> BitwiseOperator.AND;
             default -> throw new IllegalExpressionException("Wrong bitwise operation: " + operator);
         };
-    }
-
-    private static boolean hasBrackets(String expression) {
-        return Pattern.compile(TextConstants.BRACKETS_REGEX).matcher(expression).find();
-    }
-
-    private static int[] findInnermostBrackets(String expression) {
-        int rightBracket = getInnermostRightBracketIndex(expression);
-        int leftBracket = getInnermostLeftBracketIndex(expression, rightBracket);
-        return new int[]{leftBracket, rightBracket};
-    }
-
-    private static int getInnermostRightBracketIndex(String expression) {
-        return expression.indexOf(")");
-    }
-
-    private static int getInnermostLeftBracketIndex(String expression, int rightBracketIndex) {
-        char leftBracket = '(';
-        int leftBracketIndex;
-        int startIndex = rightBracketIndex - 1;
-        for (int i = startIndex; i >= 0; i--) {
-            char currentChar = expression.charAt(i);
-            if (currentChar == leftBracket) {
-                leftBracketIndex = i;
-                return leftBracketIndex;
-            }
-        }
-        return -1;
-    }
-
-    //!!!
-    private static String replaceBracketToNumber(String expression, int leftBracketIndex, int rightBracketIndex) {
-        int startIndex = leftBracketIndex + 1;
-        String expressionFromBrackets = getExpressionFromBrackets(expression, leftBracketIndex, rightBracketIndex);
-        return "need implementation";
-    }
-
-    private static String getExpressionFromBrackets(String expression, int leftBracketIndex, int rightBracketIndex) {
-        int startIndex = leftBracketIndex + 1;
-        return expression.substring(startIndex, rightBracketIndex);
-    }
-
-    private static int getRightNumber(String expression, int operatorIndex, boolean isShift) {
-        if (isShift) {
-            operatorIndex++;
-        }
-        int firstIndexOfNumber = operatorIndex + 1;
-        int lastIndexOfNumber = getExtremeIndexOfRightNumber(expression, operatorIndex);
-        return Integer.parseInt(expression.substring(firstIndexOfNumber, lastIndexOfNumber + 1));
-    }
-
-    private static int getLeftNumber(String expression, int operatorIndex) {
-        int firstIndexOfNumber = getExtremeIndexOfLeftNumber(expression, operatorIndex);
-        return Integer.parseInt(expression.substring(firstIndexOfNumber, operatorIndex));
-    }
-
-    public static int getExtremeIndexOfRightNumber(String expression, int operatorIndex) {
-        int charIndex = operatorIndex + 1;
-        char currentChar;
-        while (charIndex < expression.length()) {
-            currentChar = expression.charAt(charIndex);
-            if (TextValidator.isDigit(currentChar) || currentChar == TextConstants.NEGATIVE_SIGN) {
-                charIndex++;
-            } else {
-                break;
-            }
-        }
-        return charIndex - 1;
-    }
-
-    public static int getExtremeIndexOfLeftNumber(String expression, int operatorIndex) {
-        int charIndex = operatorIndex - 1;
-        char currentChar;
-        while (charIndex >= 0) {
-            currentChar = expression.charAt(charIndex);
-            if (TextValidator.isDigit(currentChar) || currentChar == TextConstants.NEGATIVE_SIGN) {
-                charIndex--;
-            } else {
-                break;
-            }
-        }
-        return charIndex + 1;
     }
 
     public static void main(String[] args) {

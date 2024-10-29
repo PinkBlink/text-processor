@@ -17,17 +17,6 @@ public class ExpressionParser {
     private List<Expression> numberExpressionList = new ArrayList<>();
     private final List<BitwiseOperator> operationExpressionsList = new ArrayList<>();
 
-    private final String stringExpression;
-
-    public ExpressionParser(String stringExpression) {
-        if (TextValidator.isValidExpression(stringExpression)) {
-            this.stringExpression = stringExpression;
-        } else {
-            logger.log(Level.ERROR, "Wrong expression: " + stringExpression);
-            throw new IllegalArgumentException("Wrong expression: " + stringExpression);
-        }
-    }
-
     private int parse(String stringExpression, int startIndex) {
         int index = startIndex;
         int length = stringExpression.length();
@@ -35,14 +24,23 @@ public class ExpressionParser {
         while (index < length) {
             char currentChar = stringExpression.charAt(index);
             if (currentChar == TextConstants.LEFT_BRACKET) {
-                index = parse(stringExpression, index + 1);
-            }
-            if (currentChar == TextConstants.RIGHT_BRACKET) {
-                return index;
+                int innerIndex = index + 1;
+                ExpressionParser subParser = new ExpressionParser();
+                int lastBracketIndex = subParser.parse(stringExpression, innerIndex);
+                Expression bracketExpression = subParser.getTheCollectedExpression();
+                addNumberExpressionToList(bracketExpression);
+                index = lastBracketIndex;
+                if (index == length) {
+                    break;
+                }
+                currentChar = stringExpression.charAt(index);
 
             }
+            if (currentChar == TextConstants.RIGHT_BRACKET) {
+                return index + 1;
+            }
             if (TextValidator.isDigit(currentChar)) {
-                int endIndex = getIndexNumberFrom(index, stringExpression);
+                int endIndex = getLastIndexNumberFrom(index, stringExpression);
                 int number = getNumber(index, endIndex, stringExpression);
                 Expression numberExpression = new NumberExpression(number);
                 addNumberExpressionToList(numberExpression);
@@ -50,8 +48,8 @@ public class ExpressionParser {
             } else {
                 BitwiseOperator operator = BitwiseOperationUtils.getBitwiseOperator(currentChar);
                 if (operator.equals(BitwiseOperator.NOT)) {
-                    int endIndex = getIndexNumberFrom(index, stringExpression);
-                    int number = getNumber(index, endIndex, stringExpression);
+                    int endIndex = getLastIndexNumberFrom(index, stringExpression);
+                    int number = getNumber(index + 1, endIndex, stringExpression);
                     Expression numberExpression = new NumberExpression(number);
                     Expression notExpression = new NotExpression(numberExpression);
                     addNumberExpressionToList(notExpression);
@@ -76,7 +74,7 @@ public class ExpressionParser {
         numberExpressionList.add(numberExpression);
     }
 
-    private int getIndexNumberFrom(int startIndex, String expression) {
+    private int getLastIndexNumberFrom(int startIndex, String expression) {
         int endIndex = startIndex + 1;
         while (endIndex < expression.length()
                 && TextValidator.isDigit(expression.charAt(endIndex))) {
@@ -95,18 +93,17 @@ public class ExpressionParser {
     }
 
     public Expression getTheCollectedExpression() {
-        this.parse(this.stringExpression, 0);
         for (int i = TextConstants.MAX_BITWISE_OPERATOR_PRIORITY; i > 0; i--) {
             int indexOfOperator = getFirstIndexOfOperationInPriority(i);
             while (indexOfOperator != -1) {
-                concatToOperationInList(indexOfOperator);
+                mergeExceptionWithOperator(indexOfOperator);
                 indexOfOperator = getFirstIndexOfOperationInPriority(i);
             }
         }
         return numberExpressionList.getFirst();
     }
 
-    private void concatToOperationInList(int operatorIndex) {
+    private void mergeExceptionWithOperator(int operatorIndex) {
         BitwiseOperator operator = operationExpressionsList.get(operatorIndex);
         Expression firstOperand = numberExpressionList.get(operatorIndex);
         Expression secondOperand = numberExpressionList.get(operatorIndex + 1);
@@ -117,18 +114,18 @@ public class ExpressionParser {
     }
 
     private int getFirstIndexOfOperationInPriority(int priority) {
-        int index = IntStream.range(0, operationExpressionsList.size())
+        return IntStream.range(0, operationExpressionsList.size())
                 .filter(i -> operationExpressionsList.get(i).getPriority() == priority)
                 .findFirst()
                 .orElse(-1);
-        return index;
     }
 
     public static void main(String[] args) {
-        ExpressionParser parser = new ExpressionParser("(2|5>>2)&71");
-        Expression expression = parser.getTheCollectedExpression();
+        ExpressionParser expressionParser = new ExpressionParser();
+        expressionParser.parse("(7^5|1&2<<(2|5>>2&71))|1200", 0);
+        Expression expression = expressionParser.getTheCollectedExpression();
         System.out.println("should be:");
-        System.out.println((2 | 5 >> 2) & 71);
+        System.out.println((7^5|1&2<<(2|5>>2&71))|1200);
         System.out.println("output:");
         System.out.println(expression.interpret());
     }
