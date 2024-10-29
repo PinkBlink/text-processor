@@ -21,6 +21,7 @@ public class ExpressionParser {
         int index = startIndex;
         int length = stringExpression.length();
 
+
         while (index < length) {
             char currentChar = stringExpression.charAt(index);
             if (currentChar == TextConstants.LEFT_BRACKET) {
