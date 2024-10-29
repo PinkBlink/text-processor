@@ -28,11 +28,19 @@ public class ExpressionParser {
         }
     }
 
-    private void parse() {
-        int index = 0;
+    private int parse(String stringExpression, int startIndex) {
+        int index = startIndex;
         int length = stringExpression.length();
+
         while (index < length) {
             char currentChar = stringExpression.charAt(index);
+            if (currentChar == TextConstants.LEFT_BRACKET) {
+                index = parse(stringExpression, index + 1);
+            }
+            if (currentChar == TextConstants.RIGHT_BRACKET) {
+                return index;
+
+            }
             if (TextValidator.isDigit(currentChar)) {
                 int endIndex = getIndexNumberFrom(index, stringExpression);
                 int number = getNumber(index, endIndex, stringExpression);
@@ -57,8 +65,8 @@ public class ExpressionParser {
                 index++;
             }
         }
+        return index;
     }
-
 
     private void addOperationToList(BitwiseOperator operator) {
         operationExpressionsList.add(operator);
@@ -69,7 +77,6 @@ public class ExpressionParser {
     }
 
     private int getIndexNumberFrom(int startIndex, String expression) {
-        //~2<<2;
         int endIndex = startIndex + 1;
         while (endIndex < expression.length()
                 && TextValidator.isDigit(expression.charAt(endIndex))) {
@@ -88,7 +95,7 @@ public class ExpressionParser {
     }
 
     public Expression getTheCollectedExpression() {
-        this.parse();
+        this.parse(this.stringExpression, 0);
         for (int i = TextConstants.MAX_BITWISE_OPERATOR_PRIORITY; i > 0; i--) {
             int indexOfOperator = getFirstIndexOfOperationInPriority(i);
             while (indexOfOperator != -1) {
@@ -117,12 +124,11 @@ public class ExpressionParser {
         return index;
     }
 
-
     public static void main(String[] args) {
-        ExpressionParser parser = new ExpressionParser("2|5>>2&71");
+        ExpressionParser parser = new ExpressionParser("(2|5>>2)&71");
         Expression expression = parser.getTheCollectedExpression();
         System.out.println("should be:");
-        System.out.println(2|5>>2&71);
+        System.out.println((2 | 5 >> 2) & 71);
         System.out.println("output:");
         System.out.println(expression.interpret());
     }

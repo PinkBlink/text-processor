@@ -1,9 +1,6 @@
 package org.text.processor.utils;
 
 import org.text.processor.action.interpretator.BitwiseOperator;
-import org.text.processor.action.interpretator.Expression;
-import org.text.processor.action.interpretator.NotExpression;
-import org.text.processor.action.interpretator.NumberExpression;
 import org.text.processor.constants.TextConstants;
 import org.text.processor.exception.IllegalExpressionException;
 
@@ -11,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class BitwiseOperationUtils {
 
-    //mb remove to test utils(need to create)
+    //mb remove to text utils(need to create)
     public static String replace(String expression, int startIndex, int endIndex, String replacement) {
         String result = expression.substring(0, startIndex)
                 .concat(replacement)
