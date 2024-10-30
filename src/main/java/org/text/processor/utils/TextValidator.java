@@ -28,7 +28,8 @@ public class TextValidator {
     }
 
     public static boolean isValidExpression(String expression) {
-        return Pattern.matches(TextConstants.EXPRESSION_REGEX, expression);
+        return !expression.isEmpty()
+                && Pattern.matches(TextConstants.EXPRESSION_REGEX, expression);
     }
 
     public static boolean isContainSymbol(char symbol, String expression) {
