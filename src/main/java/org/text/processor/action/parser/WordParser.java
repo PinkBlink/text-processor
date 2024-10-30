@@ -18,7 +18,7 @@ public class WordParser extends Parser {
             if(TextValidator.isValidExpression(wordString)){
                 ExpressionParser expressionParser = new ExpressionParser();
                 expressionParser.parse(wordString);
-                Expression expression = expressionParser.getTheCollectedExpression();
+                Expression expression = expressionParser.getCombinedExpression();
                 wordString = String.valueOf(expression.interpret());
             }
             Word wordSegment = new Word(wordString.trim());

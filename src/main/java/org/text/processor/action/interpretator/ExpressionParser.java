@@ -1,5 +1,6 @@
 package org.text.processor.action.interpretator;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.text.processor.constants.TextConstants;
@@ -12,24 +13,27 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class ExpressionParser {
-    //    private Logger logger = LogManager.getLogger(this.getClass());
+    private final Logger logger = LogManager.getLogger(this.getClass());
     private List<Expression> numberExpressionList = new ArrayList<>();
     private final List<BitwiseOperator> operationExpressionsList = new ArrayList<>();
 
-    public Expression getTheCollectedExpression() {
+    public Expression getCombinedExpression() {
         mergeAllExpressions();
         if (numberExpressionList.size() == 1) {
             return numberExpressionList.getFirst();
         } else {
-            System.err.println(this.operationExpressionsList + " <-- operation Expressions list");
-            System.err.println(this.numberExpressionList + "<-- Numbers list");
+            logger.log(Level.ERROR, this.operationExpressionsList + " <-- operation Expressions list");
+            logger.log(Level.ERROR, this.numberExpressionList + "<-- Numbers list");
             throw new IllegalExpressionException("Error in combining expressions, left :" + numberExpressionList.size());
         }
     }
 
     public void parse(String expression) {
-        numberExpressionList.clear();
-        operationExpressionsList.clear();
+        if (!numberExpressionList.isEmpty()
+                || !operationExpressionsList.isEmpty()) {
+            numberExpressionList.clear();
+            operationExpressionsList.clear();
+        }
         parse(expression, 0);
     }
 
@@ -39,47 +43,69 @@ public class ExpressionParser {
         while (index < length) {
             char currentChar = stringExpression.charAt(index);
             if (currentChar == TextConstants.LEFT_BRACKET) {
-                int innerIndex = index + 1;
-                ExpressionParser subParser = new ExpressionParser();
-                int lastBracketIndex = subParser.parse(stringExpression, innerIndex);
-                Expression bracketExpression = subParser.getTheCollectedExpression();
-                addNumberExpressionToList(bracketExpression);
-                index = lastBracketIndex;
+                index = parseExpressionInBrackets(stringExpression, index);
                 if (index == length) {
                     break;
                 }
                 currentChar = stringExpression.charAt(index);
-
             }
             if (currentChar == TextConstants.RIGHT_BRACKET) {
-                return index + 1;
+                return index + TextConstants.STEP;
             }
             if (TextValidator.isDigit(currentChar)) {
-                int endIndex = getLastIndexNumberFrom(index, stringExpression);
-                int number = getNumber(index, endIndex, stringExpression);
-                Expression numberExpression = new NumberExpression(number);
-                addNumberExpressionToList(numberExpression);
-                index = endIndex;
+                index = addNumberToListWithIndexShift(stringExpression, index);
             } else {
                 BitwiseOperator operator = BitwiseOperationUtils.getBitwiseOperator(currentChar);
-                if (operator.equals(BitwiseOperator.NOT)) {
-                    int endIndex = getLastIndexNumberFrom(index, stringExpression);
-                    int number = getNumber(index + 1, endIndex, stringExpression);
-                    Expression numberExpression = new NumberExpression(number);
-                    Expression notExpression = new NotExpression(numberExpression);
-                    addNumberExpressionToList(notExpression);
-                    index = endIndex-1; //problem was here need step back
-                } else {
-                    if (operator.equals(BitwiseOperator.LEFT_SHIFT)
-                            || operator.equals(BitwiseOperator.RIGHT_SHIFT)) {
-                        index++;
+                switch (operator){
+                    case NOT -> {
+                        index = addNotExpressionToExpressionListWithIndexShift(stringExpression,index);
                     }
-                    addOperationToList(operator);
+                    case LEFT_SHIFT, RIGHT_SHIFT -> {
+                        index++;
+                        addOperationToList(operator);
+                    }
+                    case XOR,OR, AND -> addOperationToList(operator);
                 }
+//                if (operator.equals(BitwiseOperator.NOT)) {
+//                    index = addNotExpressionToExpressionListWithIndexShift(stringExpression, index);
+//                } else {
+//                    if (operator.equals(BitwiseOperator.LEFT_SHIFT)
+//                            || operator.equals(BitwiseOperator.RIGHT_SHIFT)) {
+//                        index++;
+//                    }
+//                    addOperationToList(operator);
+//                }
                 index++;
             }
         }
         return index;
+    }
+
+    private int addNotExpressionToExpressionListWithIndexShift(String stringExpression, int index) {
+        int startNumberIndex = index + TextConstants.STEP;
+        int indexAfterNumber = getNextIndexAfterNumber(index, stringExpression);
+        int number = getNumber(startNumberIndex, indexAfterNumber, stringExpression);
+        Expression numberExpression = new NumberExpression(number);
+        Expression notExpression = new NotExpression(numberExpression);
+        addNumberExpressionToList(notExpression);
+        return indexAfterNumber - TextConstants.STEP;
+    }
+
+    private int parseExpressionInBrackets(String stringExpression, int index) {
+        int innerIndex = index + TextConstants.STEP;
+        ExpressionParser subParser = new ExpressionParser();
+        int lastBracketIndex = subParser.parse(stringExpression, innerIndex);
+        Expression bracketExpression = subParser.getCombinedExpression();
+        addNumberExpressionToList(bracketExpression);
+        return lastBracketIndex;
+    }
+
+    private int addNumberToListWithIndexShift(String stringExpression, int index) {
+        int endIndex = getNextIndexAfterNumber(index, stringExpression);
+        int number = getNumber(index, endIndex, stringExpression);
+        Expression numberExpression = new NumberExpression(number);
+        addNumberExpressionToList(numberExpression);
+        return endIndex;
     }
 
     private void addOperationToList(BitwiseOperator operator) {
@@ -90,7 +116,7 @@ public class ExpressionParser {
         numberExpressionList.add(numberExpression);
     }
 
-    private int getLastIndexNumberFrom(int startIndex, String expression) {
+    private int getNextIndexAfterNumber(int startIndex, String expression) {
         int endIndex = startIndex + 1;
         while (endIndex < expression.length()
                 && TextValidator.isDigit(expression.charAt(endIndex))) {
@@ -133,48 +159,5 @@ public class ExpressionParser {
                 .filter(i -> operationExpressionsList.get(i).getPriority() == priority)
                 .findFirst()
                 .orElse(-1);
-    }
-
-    public static void main(String[] args) {
-        ExpressionParser expressionParser = new ExpressionParser();
-        String expressionString1 = "5|(1&2&(3|(4&(1^5|6&47)|3)|(~89&4|(42&7)))|1)";
-        String expressionString2 = "(~71&(2&3|(3|(2&1>>2|2)&2)|10&2)|78)";//
-        String expressionString3 = "~6&9|(3&4)";
-        String expressionString4 = "(7^5|1&2<<(2|5>>2&71))|1200";
-        String expressionString5 = "13<<2";
-        String expressionString6 = "3>>5";
-        String expressionString7 = "(3|(2&1<<1))|4";
-        String expressionString8 = "(2&3)|(4^1)";
-        String expressionString9 = "~3&(2|1)";
-        String expressionString10 = "~71&(2&3|3)|78";
-        int expression1 = 5 | (1 & 2 & (3 | (4 & (1 ^ 5 | 6 & 47) | 3) | (~89 & 4 | (42 & 7))) | 1);
-        int expression2 = (~71 & (2 & 3 | (3 | (2 & 1 >> 2 | 2) & 2) | 10 & 2) | 78);  //
-        int expression3 = ~6 & 9 | (3 & 4);
-        int expression4 = (7 ^ 5 | 1 & 2 << (2 | 5 >> 2 & 71)) | 1200;
-        int expression5 = 13 << 2;
-        int expression6 = 3 >> 5;
-        int expression7 = (3 | (2 & 1 << 1)) | 4;
-        int expression8 = (2 & 3) | (4 ^ 1);
-        int expression9 = ~3 & (2 | 1);
-        testParser(expressionParser, expressionString1, expression1);
-        testParser(expressionParser, expressionString2, expression2);
-        testParser(expressionParser, expressionString3, expression3);
-        testParser(expressionParser, expressionString4, expression4);
-        testParser(expressionParser, expressionString5, expression5);
-        testParser(expressionParser, expressionString6, expression6);
-        testParser(expressionParser, expressionString7, expression7);
-        testParser(expressionParser, expressionString8, expression8);
-        testParser(expressionParser, expressionString9, expression9);
-    }
-
-    static void testParser(ExpressionParser parser, String expressionString, int expressionInt) {
-        parser.parse(expressionString);
-        Expression expression = parser.getTheCollectedExpression();
-        System.out.println("-------------------");
-        System.out.println("should be:");
-        System.out.println(expressionInt);
-        System.out.println("output:");
-        System.out.println(expression.interpret());
-        System.out.println("--------------");
     }
 }
