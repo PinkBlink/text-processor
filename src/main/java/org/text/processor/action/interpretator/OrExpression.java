@@ -11,6 +11,6 @@ public class OrExpression implements Expression {
 
     @Override
     public int interpret() {
-        return leftExpression.interpret() ^ rightExpression.interpret();
+        return leftExpression.interpret() | rightExpression.interpret();
     }
 }

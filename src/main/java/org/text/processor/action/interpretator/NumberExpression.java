@@ -11,4 +11,9 @@ public class NumberExpression implements Expression {
     public int interpret() {
         return number;
     }
+
+    @Override
+    public String toString() {
+        return "NumberExpression: " + number;
+    }
 }

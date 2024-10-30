@@ -67,6 +67,10 @@ public class ExpressionParser {
         return index;
     }
 
+    public void parse(String expression) {
+        parse(expression, 0);
+    }
+
     private void addOperationToList(BitwiseOperator operator) {
         operationExpressionsList.add(operator);
     }
@@ -123,10 +127,23 @@ public class ExpressionParser {
 
     public static void main(String[] args) {
         ExpressionParser expressionParser = new ExpressionParser();
-        expressionParser.parse("(7^5|1&2<<(2|5>>2&71))|1200", 0);
+        String expressionString1 = "5|(1&2&(3|(4&(1^5|6&47)|3)|(~89&4|(42&7)))|1)";
+        String expressionString2 = "(~71&(2&3|(3|(2&1>>2|2)&2)|10&2))|78";
+        String expressionString3 = "~6&9|(3&4)";
+        String expressionString4 = "(7^5|1&2<<(2|5>>2&71))|1200";
+        String expressionString5 = "13<<2";
+        String expressionString6 = "3>>5";
+        int expression1 = 5 | (1 & 2 & (3 | (4 & (1 ^ 5 | 6 & 47) | 3) | (~89 & 4 | (42 & 7))) | 1);
+        int expression2 = (~71 & (2 & 3 | (3 | (2 & 1 >> 2 | 2) & 2) | 10 & 2)) | 78;
+        int expression3 = ~6 & 9 | (3 & 4);
+        int expression4 = (7 ^ 5 | 1 & 2 << (2 | 5 >> 2 & 71)) | 1200;
+        int expression6 = 3 >> 5;
+
+        expressionParser.parse(expressionString4);
         Expression expression = expressionParser.getTheCollectedExpression();
+
         System.out.println("should be:");
-        System.out.println((7^5|1&2<<(2|5>>2&71))|1200);
+        System.out.println(expression4);
         System.out.println("output:");
         System.out.println(expression.interpret());
     }
