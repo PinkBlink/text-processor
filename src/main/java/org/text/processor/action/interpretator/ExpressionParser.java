@@ -56,32 +56,23 @@ public class ExpressionParser {
                 index = addNumberToListWithIndexShift(stringExpression, index);
             } else {
                 BitwiseOperator operator = BitwiseOperationUtils.getBitwiseOperator(currentChar);
-                switch (operator){
+                switch (operator) {
                     case NOT -> {
-                        index = addNotExpressionToExpressionListWithIndexShift(stringExpression,index);
+                        index = addNotExpressionAndShift(stringExpression, index);
                     }
                     case LEFT_SHIFT, RIGHT_SHIFT -> {
                         index++;
                         addOperationToList(operator);
                     }
-                    case XOR,OR, AND -> addOperationToList(operator);
+                    case XOR, OR, AND -> addOperationToList(operator);
                 }
-//                if (operator.equals(BitwiseOperator.NOT)) {
-//                    index = addNotExpressionToExpressionListWithIndexShift(stringExpression, index);
-//                } else {
-//                    if (operator.equals(BitwiseOperator.LEFT_SHIFT)
-//                            || operator.equals(BitwiseOperator.RIGHT_SHIFT)) {
-//                        index++;
-//                    }
-//                    addOperationToList(operator);
-//                }
                 index++;
             }
         }
         return index;
     }
 
-    private int addNotExpressionToExpressionListWithIndexShift(String stringExpression, int index) {
+    private int addNotExpressionAndShift(String stringExpression, int index) {
         int startNumberIndex = index + TextConstants.STEP;
         int indexAfterNumber = getNextIndexAfterNumber(index, stringExpression);
         int number = getNumber(startNumberIndex, indexAfterNumber, stringExpression);
