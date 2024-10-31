@@ -5,27 +5,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.text.processor.constants.TextConstants;
 import org.text.processor.exception.IllegalExpressionException;
-import org.text.processor.utils.BitwiseOperationUtils;
 import org.text.processor.utils.TextValidator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class ExpressionParser {
     private final Logger logger = LogManager.getLogger(this.getClass());
     private List<Expression> numberExpressionList = new ArrayList<>();
-    private final List<BitwiseOperator> operationExpressionsList = new ArrayList<>();
+    private List<BitwiseOperator> operationExpressionsList = new ArrayList<>();
 
-    public Expression getCombinedExpression() {
-        mergeAllExpressions();
-        if (numberExpressionList.size() == 1) {
-            return numberExpressionList.getFirst();
-        } else {
-            logger.log(Level.ERROR, this.operationExpressionsList + " <-- operation Expressions list");
-            logger.log(Level.ERROR, this.numberExpressionList + "<-- Numbers list");
-            throw new IllegalExpressionException("Error in combining expressions, left :" + numberExpressionList.size());
-        }
+    public List<Expression> getNumberExpressionList() {
+        return numberExpressionList;
+    }
+
+    public List<BitwiseOperator> getOperationExpressionsList() {
+        return operationExpressionsList;
     }
 
     public void parse(String expression) {
@@ -55,7 +50,7 @@ public class ExpressionParser {
             if (TextValidator.isDigit(currentChar)) {
                 index = addNumberToListWithIndexShift(stringExpression, index);
             } else {
-                BitwiseOperator operator = BitwiseOperationUtils.getBitwiseOperator(currentChar);
+                BitwiseOperator operator = BitwiseOperator.getBitwiseOperator(currentChar);
                 switch (operator) {
                     case NOT -> {
                         index = addNotExpressionAndShift(stringExpression, index);
@@ -86,7 +81,8 @@ public class ExpressionParser {
         int innerIndex = index + TextConstants.STEP;
         ExpressionParser subParser = new ExpressionParser();
         int lastBracketIndex = subParser.parse(stringExpression, innerIndex);
-        Expression bracketExpression = subParser.getCombinedExpression();
+        ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(subParser);
+        Expression bracketExpression = expressionEvaluator.getCombinedExpression();
         addNumberExpressionToList(bracketExpression);
         return lastBracketIndex;
     }
@@ -124,31 +120,5 @@ public class ExpressionParser {
             throw new IllegalExpressionException("String " + potentialNumber + " is not a number");
         }
     }
-
-    private void mergeAllExpressions() {
-        for (int i = TextConstants.MAX_BITWISE_OPERATOR_PRIORITY; i > 0; i--) {
-            int indexOfOperator = getFirstIndexOfOperationInPriority(i);
-            while (indexOfOperator != -1) {
-                mergeExceptionWithOperator(indexOfOperator);
-                indexOfOperator = getFirstIndexOfOperationInPriority(i);
-            }
-        }
-    }
-
-    private void mergeExceptionWithOperator(int operatorIndex) {
-        BitwiseOperator operator = operationExpressionsList.get(operatorIndex);
-        Expression firstOperand = numberExpressionList.get(operatorIndex);
-        Expression secondOperand = numberExpressionList.get(operatorIndex + 1);
-        Expression resultExpression = operator.getExpression(firstOperand, secondOperand);
-        numberExpressionList.remove(operatorIndex + 1);
-        numberExpressionList.set(operatorIndex, resultExpression);
-        operationExpressionsList.remove(operatorIndex);
-    }
-
-    private int getFirstIndexOfOperationInPriority(int priority) {
-        return IntStream.range(0, operationExpressionsList.size())
-                .filter(i -> operationExpressionsList.get(i).getPriority() == priority)
-                .findFirst()
-                .orElse(-1);
-    }
 }
+

@@ -2,6 +2,7 @@ package org.text.processor;
 
 import org.apache.logging.log4j.Logger;
 import org.text.processor.action.interpretator.Expression;
+import org.text.processor.action.interpretator.ExpressionEvaluator;
 import org.text.processor.action.interpretator.ExpressionParser;
 import org.text.processor.action.parser.ParagraphParser;
 import org.text.processor.action.parser.SentenceParser;
@@ -63,7 +64,8 @@ public class App {
 
     static void testParser(ExpressionParser parser, String expressionString, int expressionInt) {
         parser.parse(expressionString);
-        Expression expression = parser.getCombinedExpression();
+        ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(parser);
+        Expression expression = expressionEvaluator.getCombinedExpression();
         System.out.println("-------------------");
         System.out.println("should be:");
         System.out.println(expressionInt);

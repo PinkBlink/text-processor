@@ -50,4 +50,15 @@ public enum BitwiseOperator {
     BitwiseOperator(int priority) {
         this.priority = priority;
     }
+    public static BitwiseOperator getBitwiseOperator(char operator) {
+        return switch (operator) {
+            case '~' -> BitwiseOperator.NOT;
+            case '>' -> BitwiseOperator.RIGHT_SHIFT;
+            case '<' -> BitwiseOperator.LEFT_SHIFT;
+            case '^' -> BitwiseOperator.XOR;
+            case '|' -> BitwiseOperator.OR;
+            case '&' -> BitwiseOperator.AND;
+            default -> throw new IllegalExpressionException("Wrong bitwise operation: " + operator);
+        };
+    }
 }
