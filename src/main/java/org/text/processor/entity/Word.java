@@ -1,5 +1,7 @@
 package org.text.processor.entity;
 
+import java.util.Objects;
+
 public class Word extends TextSegment {
     private String content;
 

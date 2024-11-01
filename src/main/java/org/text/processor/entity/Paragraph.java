@@ -13,6 +13,14 @@ public class Paragraph extends TextSegment {
         sentenceList.addAll(Arrays.asList(sentences));
     }
 
+    public List<Sentence> getSentenceList() {
+        return sentenceList;
+    }
+
+    public void setSentenceList(List<Sentence> sentenceList) {
+        this.sentenceList = sentenceList;
+    }
+
     @Override
     public String getContent() {
         StringBuilder stringBuilder = new StringBuilder();

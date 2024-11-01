@@ -12,6 +12,14 @@ public class Text extends TextSegment {
 
     }
 
+    public List<Paragraph> getParagraphList() {
+        return paragraphList;
+    }
+
+    public void setParagraphList(List<Paragraph> paragraphList) {
+        this.paragraphList = paragraphList;
+    }
+
     @Override
     public String getContent() {
         StringBuilder stringBuilder = new StringBuilder();

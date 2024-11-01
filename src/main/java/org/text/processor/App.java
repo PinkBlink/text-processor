@@ -1,9 +1,9 @@
 package org.text.processor;
 
 import org.apache.logging.log4j.Logger;
-import org.text.processor.action.parser.ParagraphParser;
-import org.text.processor.action.parser.SentenceParser;
-import org.text.processor.action.parser.WordParser;
+import org.text.processor.action.parser.ParagraphTextParser;
+import org.text.processor.action.parser.SentenceTextParser;
+import org.text.processor.action.parser.WordTextParser;
 import org.text.processor.constants.TextConstants;
 import org.text.processor.entity.Text;
 import org.apache.logging.log4j.Level;
@@ -15,9 +15,9 @@ public class App {
     private static final Logger LOGGER = LogManager.getLogger(App.class);
 
     public static void main(String[] args) {
-        WordParser wordParser = new WordParser();
-        SentenceParser sentenceParser = new SentenceParser();
-        ParagraphParser paragraphParser = new ParagraphParser();
+        WordTextParser wordParser = new WordTextParser();
+        SentenceTextParser sentenceParser = new SentenceTextParser();
+        ParagraphTextParser paragraphParser = new ParagraphTextParser();
         try {
             String example = DataFileReader.getTextFromData();
             Text textSegment = new Text();

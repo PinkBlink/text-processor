@@ -20,12 +20,15 @@ public class DataFileReaderTests {
         validPath = Path.of(validPathString);
         String invalidPathString = "data/";
         invalidPath = Path.of(invalidPathString);
-        textFromData = "File for test.";
+        textFromData = "    File for test and only for that.\n" +
+                "    If you want to change something here feel free, but also change variable in test!";
     }
 
     @Test
     public void getTextFromDataPositive() throws NoFileException {
         String actual = DataFileReader.getTextFromData(validPath);
+        System.out.println(actual);
+        System.out.println(textFromData);
         Assert.assertEquals(actual, textFromData);
     }
 

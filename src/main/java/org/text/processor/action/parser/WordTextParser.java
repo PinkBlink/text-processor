@@ -9,7 +9,7 @@ import org.text.processor.entity.TextSegment;
 import org.text.processor.entity.Word;
 import org.text.processor.utils.TextValidator;
 
-public class WordParser extends Parser {
+public class WordTextParser extends TextParser {
     @Override
     public void parse(TextSegment textSegment, String text) {
         Sentence sentenceSegment = (Sentence) textSegment;
@@ -22,6 +22,9 @@ public class WordParser extends Parser {
                 ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(expressionParser);
                 Expression expression = expressionEvaluator.getCombinedExpression();
                 wordString = String.valueOf(expression.interpret());
+            }
+            if(wordString.isEmpty()){
+                continue;
             }
             Word wordSegment = new Word(wordString.trim());
             sentenceSegment.addWord(wordSegment);

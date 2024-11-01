@@ -5,7 +5,7 @@ import org.text.processor.entity.Paragraph;
 import org.text.processor.entity.Text;
 import org.text.processor.entity.TextSegment;
 
-public class ParagraphParser extends Parser {
+public class ParagraphTextParser extends TextParser {
     @Override
     public void parse(TextSegment textSegment, String text) {
         Text currentTextSegment = (Text) textSegment;
@@ -14,8 +14,8 @@ public class ParagraphParser extends Parser {
         for (String paragraphString : paragraphs) {
             Paragraph paragraphSegment = new Paragraph();
             currentTextSegment.addParagraph(paragraphSegment);
-            if (nextParser != null) {
-                nextParser.parse(paragraphSegment, paragraphString);
+            if (nextTextParser != null) {
+                nextTextParser.parse(paragraphSegment, paragraphString.trim());
             }
         }
     }
