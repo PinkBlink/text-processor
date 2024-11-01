@@ -1,5 +1,7 @@
 package org.text.processor.entity;
 
+import org.text.processor.constants.TextConstants;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,8 +25,13 @@ public class Text extends TextSegment {
     @Override
     public String getContent() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Paragraph paragraph : paragraphList) {
+        for (int i = 0; i < paragraphList.size(); i++) {
+            Paragraph paragraph = paragraphList.get(i);
             stringBuilder.append(paragraph.getContent());
+            if (i == paragraphList.size() - TextConstants.STEP) {
+                break;
+            }
+            stringBuilder.append(TextConstants.LINE_BREAK_SEPARATOR);
         }
         return stringBuilder.toString();
     }

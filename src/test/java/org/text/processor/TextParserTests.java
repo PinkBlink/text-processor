@@ -15,41 +15,44 @@ import org.text.processor.utils.DataFileReader;
 import java.nio.file.Path;
 
 public class TextParserTests {
-    private String expectedText;
-    private Text expected;
+    private String expectedText1;
+
+    private String textWithExpression;
+    int expressionFromText;
+
+    private String expectedTextWithResolvedExpression;
 
     @BeforeTest
     public void setUp() throws NoFileException {
-        expectedText = DataFileReader.getTextFromData(Path.of("data/test.txt"));
+        expectedText1 = DataFileReader.getTextFromData(Path.of("data/test.txt"));
+        textWithExpression = "Just text with expression for example 3^12|213|(~12&5^2).";
+        expressionFromText = 3 ^ 12 | 213 | (~12 & 5 ^ 2);
+        expectedTextWithResolvedExpression = "  Just text with expression for example " + expressionFromText + ".";
+
     }
 
     @Test
-    public void parserTest() {
+    public void parserTest1() {
+        Text actual = getTextFromChain(expectedText1);
+        String actualString = actual.getContent();
+        Assert.assertEquals(actualString, expectedText1, actualString + " <-return");
+    }
+
+    @Test
+    public void parserTestWithExpression() { //need add обработку точки вконце
+        Text actual = getTextFromChain(textWithExpression);
+        String actualString = actual.getContent();
+        Assert.assertEquals(actualString, expectedTextWithResolvedExpression, actualString + " <-return");
+    }
+
+    private Text getTextFromChain(String text) {
         ParagraphTextParser paragraphTextParser = new ParagraphTextParser();
         SentenceTextParser sentenceTextParser = new SentenceTextParser();
         WordTextParser wordTextParser = new WordTextParser();
         paragraphTextParser.setNextParser(sentenceTextParser);
         sentenceTextParser.setNextParser(wordTextParser);
         Text actual = new Text();
-        paragraphTextParser.parse(actual, expectedText);
-        String actualString = actual.getContent();
-        System.out.println("Длина ожидаемой строки: " + expectedText.length());
-        System.out.println("Длина фактической строки: " + actualString.length());
-        char[] actChars = actualString.toCharArray();
-        char[] expChars = expectedText.toCharArray();
-        for (int i = 0; i < Math.max(expChars.length, actChars.length); i++) {
-
-            char expectedChar = (i < expChars.length) ? expChars[i] : ' ';
-            char actualChar = (i < actChars.length) ? actChars[i] : ' ';
-
-            if (expectedChar != actualChar) {
-                System.out.println("Различие на индексе " + i + ": ожидается '" + expectedChar + "', фактически '" + actualChar + "'");
-                System.out.println(expChars[i-1]);
-            }
-        }
-        System.out.println(actualString.equals(expectedText));
-        System.out.println(actual.getContent());
-        System.out.println(expectedText);
-        Assert.assertEquals(actualString, expectedText);
+        paragraphTextParser.parse(actual, text);
+        return actual;
     }
 }
