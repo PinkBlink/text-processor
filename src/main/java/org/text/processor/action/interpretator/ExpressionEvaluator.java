@@ -41,9 +41,14 @@ public class ExpressionEvaluator {
     }
 
     private void mergeExceptionWithOperator(int operatorIndex) {
+        if (operatorIndex + TextConstants.STEP == expressionsList.size()) {
+            logger.log(Level.ERROR, expressionsList + "<--- Expressions");
+            logger.log(Level.ERROR, operatorList + "<--- Operators");
+            throw new IllegalExpressionException("Not enough operand");
+        }
         BitwiseOperator operator = operatorList.get(operatorIndex);
         Expression firstOperand = expressionsList.get(operatorIndex);
-        Expression secondOperand = expressionsList.get(operatorIndex + 1);
+        Expression secondOperand = expressionsList.get(operatorIndex + TextConstants.STEP);
         Expression resultExpression = operator.getExpression(firstOperand, secondOperand);
         expressionsList.remove(operatorIndex + 1);
         expressionsList.set(operatorIndex, resultExpression);

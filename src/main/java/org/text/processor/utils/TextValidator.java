@@ -5,15 +5,14 @@ import org.text.processor.constants.TextConstants;
 import java.util.regex.Pattern;
 
 public class TextValidator {
-    public boolean isByteExpression(String string) {
-        return string.contains(">>");
-    }
-
     public static boolean isDigit(char digit) {
         return Character.isDigit(digit);
     }
 
     public static boolean isNumber(String string) {
+        if (string.isEmpty()) {
+            return false;
+        }
         for (int i = 0; i < string.length(); i++) {
             char negativeSign = '-';
             char currentChar = string.charAt(i);
@@ -32,7 +31,4 @@ public class TextValidator {
                 && Pattern.matches(TextConstants.EXPRESSION_REGEX, expression);
     }
 
-    public static boolean isContainSymbol(char symbol, String expression) {
-        return expression.indexOf(symbol) != -1;
-    }
 }

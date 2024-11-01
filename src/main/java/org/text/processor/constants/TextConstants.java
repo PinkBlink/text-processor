@@ -9,5 +9,6 @@ public class TextConstants {
     public static final char LEFT_BRACKET = '(';
     public static final char RIGHT_BRACKET = ')';
     public static final int MAX_BITWISE_OPERATOR_PRIORITY = 5;
+    public static final String PATH_TO_DATA = "data/data.txt";
     public static final int STEP = 1;
 }

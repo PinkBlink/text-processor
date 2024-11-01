@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 
 public class DataFileReader {
     private static final Logger LOGGER = LogManager.getLogger(DataFileReader.class);
-    private static final String PATH_TO_DATA = "data/data.txt";
 
     public static String getTextFromData(Path path) throws NoFileException {
         String readingErrorMessage = "File at path " + path + " is not readable, or does not exist.";
@@ -32,6 +31,6 @@ public class DataFileReader {
     }
 
     public static String getTextFromData() throws NoFileException {
-        return getTextFromData(Paths.get(PATH_TO_DATA));
+        return getTextFromData(Paths.get(TextConstants.PATH_TO_DATA));
     }
 }
