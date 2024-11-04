@@ -1,8 +1,5 @@
 package org.text.processor.action.parser;
 
-import org.text.processor.action.interpretator.Expression;
-import org.text.processor.action.interpretator.ExpressionEvaluator;
-import org.text.processor.action.interpretator.ExpressionParser;
 import org.text.processor.constants.TextConstants;
 import org.text.processor.entity.Sentence;
 import org.text.processor.entity.TextSegment;
@@ -31,6 +28,7 @@ public class WordTextParser extends TextParser {
             if (wordString.isEmpty()) {
                 continue;
             }
+
             Word wordSegment = new Word(wordString.trim());
             sentenceSegment.addWord(wordSegment);
         }
