@@ -7,6 +7,7 @@ import org.text.processor.constants.TextConstants;
 import org.text.processor.entity.Sentence;
 import org.text.processor.entity.TextSegment;
 import org.text.processor.entity.Word;
+import org.text.processor.utils.TextUtils;
 import org.text.processor.utils.TextValidator;
 
 public class WordTextParser extends TextParser {
@@ -19,13 +20,13 @@ public class WordTextParser extends TextParser {
             String wordString = words[i];
             int lastIndex = wordsLength - 1;
             if (i == lastIndex) {
-                String[] separatedWord = TextValidator.getSeparatedWordFromFinalPunctuation(wordString);
+                String[] separatedWord = TextUtils.getSeparatedWordFromFinalPunctuation(wordString);
                 wordString = separatedWord[0];
                 String finalPunctuation = separatedWord[1];
                 sentenceSegment.setFinalPunctuation(finalPunctuation);
             }
             if (TextValidator.isValidExpression(wordString)) {
-                wordString = String.valueOf(getEvaluatedExpression(wordString));
+                wordString = String.valueOf(TextUtils.getEvaluatedExpression(wordString));
             }
             if (wordString.isEmpty()) {
                 continue;
@@ -35,11 +36,4 @@ public class WordTextParser extends TextParser {
         }
     }
 
-    private int getEvaluatedExpression(String expression) {
-        ExpressionParser expressionParser = new ExpressionParser();
-        expressionParser.parse(expression);
-        ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(expressionParser);
-        Expression result = expressionEvaluator.getCombinedExpression();
-        return result.interpret();
-    }
 }
