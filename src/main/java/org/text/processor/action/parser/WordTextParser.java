@@ -15,19 +15,31 @@ public class WordTextParser extends TextParser {
         Sentence sentenceSegment = (Sentence) textSegment;
         String[] words = text.split(TextConstants.SPACE_SEPARATOR);
 
-        for (String wordString : words) {
-            if(TextValidator.isValidExpression(wordString)){
-                ExpressionParser expressionParser = new ExpressionParser();
-                expressionParser.parse(wordString);
-                ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(expressionParser);
-                Expression expression = expressionEvaluator.getCombinedExpression();
-                wordString = String.valueOf(expression.interpret());
+        for (int i = 0, wordsLength = words.length; i < wordsLength; i++) {
+            String wordString = words[i];
+            int lastIndex = wordsLength - 1;
+            if (i == lastIndex) {
+                String[] separatedWord = TextValidator.getSeparatedWordFromFinalPunctuation(wordString);
+                wordString = separatedWord[0];
+                String finalPunctuation = separatedWord[1];
+                sentenceSegment.setFinalPunctuation(finalPunctuation);
             }
-            if(wordString.isEmpty()){
+            if (TextValidator.isValidExpression(wordString)) {
+                wordString = String.valueOf(getEvaluatedExpression(wordString));
+            }
+            if (wordString.isEmpty()) {
                 continue;
             }
             Word wordSegment = new Word(wordString.trim());
             sentenceSegment.addWord(wordSegment);
         }
+    }
+
+    private int getEvaluatedExpression(String expression) {
+        ExpressionParser expressionParser = new ExpressionParser();
+        expressionParser.parse(expression);
+        ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(expressionParser);
+        Expression result = expressionEvaluator.getCombinedExpression();
+        return result.interpret();
     }
 }

@@ -31,4 +31,25 @@ public class TextValidator {
                 && Pattern.matches(TextConstants.EXPRESSION_REGEX, expression);
     }
 
+    public static int getPunctuationStartIndex(String word) {
+        char[] letters = word.toCharArray();
+        for (int i = 0; i < letters.length; i++) {
+            char currentChar = letters[i];
+            if (currentChar == '.' || currentChar == '?' || currentChar == '!') {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static String[] getSeparatedWordFromFinalPunctuation(String word) {
+        int indexOfPunctuation = getPunctuationStartIndex(word);
+        if (indexOfPunctuation == -1) {
+            return new String[]{word, ""};
+        }
+        String[] result = new String[2];
+        result[0] = word.substring(0, indexOfPunctuation);
+        result[1] = word.substring(indexOfPunctuation);
+        return result;
+    }
 }

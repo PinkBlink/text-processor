@@ -5,9 +5,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.text.processor.action.parser.ParagraphTextParser;
 import org.text.processor.action.parser.SentenceTextParser;
-import org.text.processor.action.parser.TextParser;
 import org.text.processor.action.parser.WordTextParser;
-import org.text.processor.constants.TextConstants;
 import org.text.processor.entity.Text;
 import org.text.processor.exception.NoFileException;
 import org.text.processor.utils.DataFileReader;
@@ -25,9 +23,9 @@ public class TextParserTests {
     @BeforeTest
     public void setUp() throws NoFileException {
         expectedText1 = DataFileReader.getTextFromData(Path.of("data/test.txt"));
-        textWithExpression = "Just text with expression for example 3^12|213|(~12&5^2).";
+        textWithExpression = "    Just text with expression for example 3^12|213|(~12&5^2).";
         expressionFromText = 3 ^ 12 | 213 | (~12 & 5 ^ 2);
-        expectedTextWithResolvedExpression = "  Just text with expression for example " + expressionFromText + ".";
+        expectedTextWithResolvedExpression = "    Just text with expression for example " + expressionFromText + ".";
 
     }
 
@@ -39,7 +37,7 @@ public class TextParserTests {
     }
 
     @Test
-    public void parserTestWithExpression() { //need add обработку точки вконце
+    public void parserTestWithExpression() {
         Text actual = getTextFromChain(textWithExpression);
         String actualString = actual.getContent();
         Assert.assertEquals(actualString, expectedTextWithResolvedExpression, actualString + " <-return");

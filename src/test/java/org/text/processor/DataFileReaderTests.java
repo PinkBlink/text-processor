@@ -21,7 +21,7 @@ public class DataFileReaderTests {
         String invalidPathString = "data/";
         invalidPath = Path.of(invalidPathString);
         textFromData = "    File for test and only for that.\n" +
-                "    If you want to change something here feel free, but also change variable in test!";
+                "    If you want to change something here feel free, but also change variable in test! Just test.";
     }
 
     @Test

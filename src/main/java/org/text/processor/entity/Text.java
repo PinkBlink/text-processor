@@ -25,10 +25,11 @@ public class Text extends TextSegment {
     @Override
     public String getContent() {
         StringBuilder stringBuilder = new StringBuilder();
+        int lastParagraphIndex = paragraphList.size() - TextConstants.STEP;
         for (int i = 0; i < paragraphList.size(); i++) {
             Paragraph paragraph = paragraphList.get(i);
             stringBuilder.append(paragraph.getContent());
-            if (i == paragraphList.size() - TextConstants.STEP) {
+            if (i == lastParagraphIndex) {
                 break;
             }
             stringBuilder.append(TextConstants.LINE_BREAK_SEPARATOR);

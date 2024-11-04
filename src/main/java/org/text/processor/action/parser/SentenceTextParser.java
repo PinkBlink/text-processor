@@ -10,10 +10,15 @@ public class SentenceTextParser extends TextParser {
     public void parse(TextSegment textSegment, String text) {
         Paragraph paragraphSegment = (Paragraph) textSegment;
         String[] sentences = text.split(TextConstants.SENTENCE_SEPARATOR_REGEX);
+        int lastSentence = sentences.length - 1;
 
-        for (String sentenceString : sentences) {
+        for (int i = 0; i < sentences.length; i++) {
+            String sentenceString = sentences[i];
             Sentence sentenceSegment = new Sentence();
             paragraphSegment.addSentence(sentenceSegment);
+            if (i == lastSentence) {
+                sentenceSegment.setLastInParagraph(true);
+            }
             if (nextTextParser != null) {
                 nextTextParser.parse(sentenceSegment, sentenceString.trim());
             }

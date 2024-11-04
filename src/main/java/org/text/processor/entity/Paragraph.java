@@ -27,8 +27,10 @@ public class Paragraph extends TextSegment {
         stringBuilder.append(TextConstants.TAB_SEPARATOR);
         for (Sentence sentence : sentenceList) {
             stringBuilder.append(sentence.getContent());
+            if (!sentence.isLastInParagraph()) {
+                stringBuilder.append(TextConstants.SPACE_SEPARATOR);
+            }
         }
-//        stringBuilder.append(TextConstants.LINE_BREAK_SEPARATOR);
         return stringBuilder.toString();
     }
 }

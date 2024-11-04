@@ -8,9 +8,20 @@ import java.util.List;
 
 public class Sentence extends TextSegment {
     private List<Word> wordList = new ArrayList<>();
+    private String finalPunctuation;
 
-    public void addWord(Word... word) {
-        wordList.addAll(Arrays.asList(word));
+    private boolean isLastInParagraph;
+
+    public boolean isLastInParagraph() {
+        return isLastInParagraph;
+    }
+
+    public void setLastInParagraph(boolean lastInParagraph) {
+        isLastInParagraph = lastInParagraph;
+    }
+
+    public void addWord(Word... words) {
+        wordList.addAll(Arrays.asList(words));
     }
 
     public List<Word> getWordList() {
@@ -21,18 +32,23 @@ public class Sentence extends TextSegment {
         this.wordList = wordList;
     }
 
+    public void setFinalPunctuation(String finalPunctuation) {
+        this.finalPunctuation = finalPunctuation;
+    }
+
     @Override
     public String getContent() {
         StringBuilder stringBuilder = new StringBuilder();
+        int lastWordIndex = wordList.size() - 1;
         for (int i = 0; i < wordList.size(); i++) {
             Word word = wordList.get(i);
-            if (i== wordList.size()-1){
-                stringBuilder.append(word.getContent());
+            stringBuilder.append(word.getContent());
+            if (i == lastWordIndex) {
                 break;
             }
-            stringBuilder.append(word.getContent())
-                    .append(TextConstants.SPACE_SEPARATOR);
+            stringBuilder.append(TextConstants.SPACE_SEPARATOR);
         }
-        return stringBuilder.toString();
+        stringBuilder.append(finalPunctuation);
+        return stringBuilder.toString().trim();
     }
 }
