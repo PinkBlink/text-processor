@@ -55,7 +55,7 @@ public class TextParserTests {
     @Test
     public void parserTest2() {
         try {
-            String expected = DataFileReader.getTextFromData(Path.of("data/test_for_sorter.txt"));
+            String expected = DataFileReader.getTextFromData(Constants.PATH_TO_TEST_TXT);
             Text actual = TextUtils.getParsedText(expected);
             logger.log(Level.INFO, "Expected: " + expected);
             logger.log(Level.INFO, "Actual: " + actual.getContent());
