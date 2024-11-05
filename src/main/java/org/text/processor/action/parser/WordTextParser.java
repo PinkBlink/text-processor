@@ -1,6 +1,7 @@
 package org.text.processor.action.parser;
 
 import org.text.processor.constants.TextConstants;
+import org.text.processor.entity.PunctuationMark;
 import org.text.processor.entity.Sentence;
 import org.text.processor.entity.TextSegment;
 import org.text.processor.entity.Word;
@@ -15,23 +16,20 @@ public class WordTextParser extends TextParser {
 
         for (int i = 0, wordsLength = words.length; i < wordsLength; i++) {
             String wordString = words[i];
-            int lastIndex = wordsLength - 1;
-            if (i == lastIndex) {
-                String[] separatedWord = TextUtils.getSeparatedWordFromFinalPunctuation(wordString);
+            if (wordString.isEmpty()) {
+                continue;
+            }
+            if (TextValidator.hasPunctuation(wordString)) {
+                String[] separatedWord = TextUtils.getSeparatedWordFromPunctuation(wordString);
                 wordString = separatedWord[0];
-                String finalPunctuation = separatedWord[1];
-                sentenceSegment.setFinalPunctuation(finalPunctuation);
+                PunctuationMark punctuationMark = new PunctuationMark(separatedWord[1], i);
+                sentenceSegment.addPunctuation(punctuationMark);
             }
             if (TextValidator.isValidExpression(wordString)) {
                 wordString = String.valueOf(TextUtils.getEvaluatedExpression(wordString));
             }
-            if (wordString.isEmpty()) {
-                continue;
-            }
-
             Word wordSegment = new Word(wordString.trim());
             sentenceSegment.addWord(wordSegment);
         }
     }
-
 }

@@ -3,6 +3,10 @@ package org.text.processor.utils;
 import org.text.processor.action.interpretator.Expression;
 import org.text.processor.action.interpretator.ExpressionEvaluator;
 import org.text.processor.action.interpretator.ExpressionParser;
+import org.text.processor.action.parser.ParagraphTextParser;
+import org.text.processor.action.parser.SentenceTextParser;
+import org.text.processor.action.parser.WordTextParser;
+import org.text.processor.entity.Text;
 
 public class TextUtils {
 
@@ -17,7 +21,7 @@ public class TextUtils {
         return -1;
     }
 
-    public static String[] getSeparatedWordFromFinalPunctuation(String word) {
+    public static String[] getSeparatedWordFromPunctuation(String word) {
         int indexOfPunctuation = getPunctuationStartIndex(word);
         if (indexOfPunctuation == -1) {
             return new String[]{word, ""};
@@ -34,5 +38,15 @@ public class TextUtils {
         ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(expressionParser);
         Expression result = expressionEvaluator.getCombinedExpression();
         return result.interpret();
+    }
+    public static Text getTextFromChain(String text) {
+        ParagraphTextParser paragraphTextParser = new ParagraphTextParser();
+        SentenceTextParser sentenceTextParser = new SentenceTextParser();
+        WordTextParser wordTextParser = new WordTextParser();
+        paragraphTextParser.setNextParser(sentenceTextParser);
+        sentenceTextParser.setNextParser(wordTextParser);
+        Text actual = new Text();
+        paragraphTextParser.parse(actual, text);
+        return actual;
     }
 }

@@ -25,9 +25,11 @@ public class Paragraph extends TextSegment {
     public String getContent() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(TextConstants.TAB_SEPARATOR);
-        for (Sentence sentence : sentenceList) {
+        int lastSentenceInParagraph = sentenceList.size() - 1;
+        for (int i = 0; i < sentenceList.size(); i++) {
+            Sentence sentence = sentenceList.get(i);
             stringBuilder.append(sentence.getContent());
-            if (!sentence.isLastInParagraph()) {
+            if (i != lastSentenceInParagraph) {
                 stringBuilder.append(TextConstants.SPACE_SEPARATOR);
             }
         }

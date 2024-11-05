@@ -8,20 +8,14 @@ import java.util.List;
 
 public class Sentence extends TextSegment {
     private List<Word> wordList = new ArrayList<>();
-    private String finalPunctuation;
-
-    private boolean isLastInParagraph;
-
-    public boolean isLastInParagraph() {
-        return isLastInParagraph;
-    }
-
-    public void setLastInParagraph(boolean lastInParagraph) {
-        isLastInParagraph = lastInParagraph;
-    }
+    private final List<PunctuationMark> markList = new ArrayList<>();
 
     public void addWord(Word... words) {
         wordList.addAll(Arrays.asList(words));
+    }
+
+    public void addPunctuation(PunctuationMark... punctuationMarks) {
+        markList.addAll(Arrays.asList(punctuationMarks));
     }
 
     public List<Word> getWordList() {
@@ -32,23 +26,18 @@ public class Sentence extends TextSegment {
         this.wordList = wordList;
     }
 
-    public void setFinalPunctuation(String finalPunctuation) {
-        this.finalPunctuation = finalPunctuation;
-    }
-
     @Override
     public String getContent() {
         StringBuilder stringBuilder = new StringBuilder();
-        int lastWordIndex = wordList.size() - 1;
         for (int i = 0; i < wordList.size(); i++) {
             Word word = wordList.get(i);
             stringBuilder.append(word.getContent());
-            if (i == lastWordIndex) {
-                break;
+            if (!markList.isEmpty() && i == markList.getFirst().getIndexInSentence()) {
+                PunctuationMark punctuationMark = markList.removeFirst();
+                stringBuilder.append(punctuationMark.getContent());
             }
             stringBuilder.append(TextConstants.SPACE_SEPARATOR);
         }
-        stringBuilder.append(finalPunctuation);
         return stringBuilder.toString().trim();
     }
 }
