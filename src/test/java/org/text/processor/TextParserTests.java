@@ -28,14 +28,14 @@ public class TextParserTests {
 
     @Test
     public void parserTest1() {
-        Text actual = TextUtils.getTextFromChain(expectedTextWithoutExpression);
+        Text actual = TextUtils.getParsedText(expectedTextWithoutExpression);
         String actualString = actual.getContent();
         Assert.assertEquals(actualString, expectedTextWithoutExpression, actualString + " <-return");
     }
 
     @Test
     public void parserTestWithExpression() {
-        Text actual = TextUtils.getTextFromChain(textWithExpression);
+        Text actual = TextUtils.getParsedText(textWithExpression);
         String actualString = actual.getContent();
         Assert.assertEquals(actualString, expectedTextWithExpression, actualString + " <-return");
     }

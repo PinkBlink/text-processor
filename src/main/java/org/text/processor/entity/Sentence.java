@@ -29,12 +29,14 @@ public class Sentence extends TextSegment {
     @Override
     public String getContent() {
         StringBuilder stringBuilder = new StringBuilder();
+        int indexOfPunctuation = 0;
         for (int i = 0; i < wordList.size(); i++) {
             Word word = wordList.get(i);
             stringBuilder.append(word.getContent());
-            if (!markList.isEmpty() && i == markList.getFirst().getIndexInSentence()) {
-                PunctuationMark punctuationMark = markList.removeFirst();
+            if (indexOfPunctuation < markList.size() && i == markList.get(indexOfPunctuation).getIndexInSentence()) {
+                PunctuationMark punctuationMark = markList.get(indexOfPunctuation);
                 stringBuilder.append(punctuationMark.getContent());
+                indexOfPunctuation++;
             }
             stringBuilder.append(TextConstants.SPACE_SEPARATOR);
         }

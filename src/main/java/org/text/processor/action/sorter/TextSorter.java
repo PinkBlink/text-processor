@@ -4,6 +4,7 @@ import org.text.processor.entity.Paragraph;
 import org.text.processor.entity.Sentence;
 import org.text.processor.entity.Text;
 import org.text.processor.entity.Word;
+import org.text.processor.utils.TextUtils;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -31,12 +32,8 @@ public class TextSorter {
     public void getSortedWordsInSentenceBySymbol(Sentence sentence, char symbol) {
         sentence.setWordList(sentence.getWordList().stream()
                 .sorted(Comparator
-                        .comparing((Word w) -> getAmountOfSymbolInWord(w, symbol), Comparator.reverseOrder())
+                        .comparing((Word w) -> TextUtils.getAmountOfSymbolInWord(w, symbol), Comparator.reverseOrder())
                         .thenComparing(w -> w.getContent().toLowerCase()))
                 .toList());
-    }
-
-    private int getAmountOfSymbolInWord(Word word, char symbol) {
-        return (int) word.getContent().chars().filter(s -> s == symbol).count();
     }
 }

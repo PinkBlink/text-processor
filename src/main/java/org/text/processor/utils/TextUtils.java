@@ -7,6 +7,7 @@ import org.text.processor.action.parser.ParagraphTextParser;
 import org.text.processor.action.parser.SentenceTextParser;
 import org.text.processor.action.parser.WordTextParser;
 import org.text.processor.entity.Text;
+import org.text.processor.entity.Word;
 
 public class TextUtils {
 
@@ -14,7 +15,7 @@ public class TextUtils {
         char[] letters = word.toCharArray();
         for (int i = 0; i < letters.length; i++) {
             char currentChar = letters[i];
-            if (currentChar == '.' || currentChar == '?' || currentChar == '!') {
+            if (currentChar == '.' || currentChar == '?' || currentChar == '!' || currentChar == ',') {
                 return i;
             }
         }
@@ -39,7 +40,7 @@ public class TextUtils {
         Expression result = expressionEvaluator.getCombinedExpression();
         return result.interpret();
     }
-    public static Text getTextFromChain(String text) {
+    public static Text getParsedText(String text) {
         ParagraphTextParser paragraphTextParser = new ParagraphTextParser();
         SentenceTextParser sentenceTextParser = new SentenceTextParser();
         WordTextParser wordTextParser = new WordTextParser();
@@ -48,5 +49,8 @@ public class TextUtils {
         Text actual = new Text();
         paragraphTextParser.parse(actual, text);
         return actual;
+    }
+    public static int getAmountOfSymbolInWord(Word word, char symbol) {
+        return (int) word.getContent().chars().filter(s -> s == symbol).count();
     }
 }
