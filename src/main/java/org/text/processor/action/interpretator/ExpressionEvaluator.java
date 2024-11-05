@@ -11,8 +11,8 @@ import java.util.stream.IntStream;
 
 public class ExpressionEvaluator {
     private final Logger logger = LogManager.getLogger(this.getClass());
-    private List<BitwiseOperator> operatorList;
-    private List<Expression> expressionsList;
+    private final List<BitwiseOperator> operatorList;
+    private final List<Expression> expressionsList;
 
     public ExpressionEvaluator(ExpressionParser parser) {
         this.operatorList = parser.getOperationExpressionsList();
@@ -21,7 +21,7 @@ public class ExpressionEvaluator {
 
     public Expression getCombinedExpression() {
         mergeAllExpressions();
-        if (expressionsList.size() == 1) {
+        if (isOneExpression()) {
             return expressionsList.getFirst();
         } else {
             logger.log(Level.ERROR, this.expressionsList + " <-- operation Expressions list");
@@ -60,5 +60,8 @@ public class ExpressionEvaluator {
                 .filter(i -> operatorList.get(i).getPriority() == priority)
                 .findFirst()
                 .orElse(-1);
+    }
+    private boolean isOneExpression(){
+        return expressionsList.size() == 1;
     }
 }

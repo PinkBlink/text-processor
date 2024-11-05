@@ -12,7 +12,6 @@ import org.text.processor.exception.NoFileException;
 import org.text.processor.utils.DataFileReader;
 import org.text.processor.utils.TextUtils;
 
-import java.nio.file.Path;
 
 public class TextSorterTests {
     private final TextSorter textSorter = new TextSorter();
@@ -20,7 +19,7 @@ public class TextSorterTests {
 
     @BeforeTest
     public void setUp() throws NoFileException {
-        String textStringFromData = DataFileReader.getTextFromData(Path.of("data/test_for_sorter.txt"));
+        String textStringFromData = DataFileReader.getTextFromData(Constants.PATH_TO_TEXT_FOR_SORTER_TXT);
         textFromData = TextUtils.getParsedText(textStringFromData);
     }
 
@@ -65,7 +64,7 @@ public class TextSorterTests {
     }
 
     @Test
-    public void testSortWordsInSentenceBySymbol() {
+    public void testSortWordsInSentenceBySymbol1() {
         Sentence actual = textFromData.getParagraphList().get(2).getSentenceList().get(1);
         char symbol = 'o';
         textSorter.getSortedWordsInSentenceBySymbol(actual, symbol);
@@ -75,6 +74,19 @@ public class TextSorterTests {
             String message = "Current = " + currentWord.getContent() + " Next" + nextWord.getContent();
             Assert.assertTrue(isMoreSymbolsOrAlphabeticIfEquals(currentWord, nextWord, symbol),message);
 
+        }
+    }
+
+    @Test
+    public void testSortWordsInSentenceBySymbol2() {
+        Sentence actual = textFromData.getParagraphList().getFirst().getSentenceList().getFirst();
+        char symbol = 'e';
+        textSorter.getSortedWordsInSentenceBySymbol(actual, symbol);
+        for (int i = 0; i < actual.getWordList().size() - 1; i++) {
+            Word currentWord = actual.getWordList().get(i);
+            Word nextWord = actual.getWordList().get(i + 1);
+            String message = "Current = " + currentWord.getContent() + " Next = " + nextWord.getContent();
+            Assert.assertTrue(isMoreSymbolsOrAlphabeticIfEquals(currentWord, nextWord, symbol), message);
         }
     }
 
