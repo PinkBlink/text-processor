@@ -25,8 +25,7 @@ public class TextSorterTests {
 
     @Test
     public void testSortParagraphsBySentenceCount() {
-        Text actual = textFromData;
-        textSorter.getSortedParagraphsBySentencesCount(actual);
+        Text actual = textSorter.getSortedParagraphsBySentencesCount(textFromData);
         int paragraphsAmount = textFromData.getParagraphList().size();
         for (int i = 0; i < paragraphsAmount - 1; i++) {
             Paragraph currentParagraph = actual.getParagraphList().get(i);
@@ -39,8 +38,8 @@ public class TextSorterTests {
 
     @Test
     public void testSortSentencesInParagraphByLength() {
-        Paragraph actual = textFromData.getParagraphList().get(1);
-        textSorter.getSortedSentencesInParagraphByWordsCount(actual);
+        Paragraph paragraphFromData = textFromData.getParagraphList().get(1);
+        Paragraph actual = textSorter.getSortedSentencesInParagraphByWordsCount(paragraphFromData);
         for (int i = 0; i < actual.getSentenceList().size() - 1; i++) {
             Sentence currentSentence = actual.getSentenceList().get(i);
             Sentence nextSentence = actual.getSentenceList().get(i);
@@ -52,8 +51,8 @@ public class TextSorterTests {
 
     @Test
     public void testSortWordsInSentenceByLength() {
-        Sentence actual = textFromData.getParagraphList().getFirst().getSentenceList().get(1);
-        textSorter.getSortedWordsInSentenceByLength(actual);
+        Sentence sentenceFromData = textFromData.getParagraphList().getFirst().getSentenceList().get(1);
+        Sentence actual = textSorter.getSortedWordsInSentenceByLength(sentenceFromData);
         for (int i = 0; i < actual.getWordList().size() - 1; i++) {
             Word currentWord = actual.getWordList().get(i);
             Word nextWord = actual.getWordList().get(i + 1);
@@ -65,23 +64,24 @@ public class TextSorterTests {
 
     @Test
     public void testSortWordsInSentenceBySymbol1() {
-        Sentence actual = textFromData.getParagraphList().get(2).getSentenceList().get(1);
+        Sentence sentenceFromData = textFromData.getParagraphList().get(2).getSentenceList().get(1);
         char symbol = 'o';
+        Sentence actual = textSorter.getSortedWordsInSentenceBySymbol(sentenceFromData, 'o');
         textSorter.getSortedWordsInSentenceBySymbol(actual, symbol);
         for (int i = 0; i < actual.getWordList().size() - 1; i++) {
             Word currentWord = actual.getWordList().get(i);
             Word nextWord = actual.getWordList().get(i);
             String message = "Current = " + currentWord.getContent() + " Next" + nextWord.getContent();
-            Assert.assertTrue(isMoreSymbolsOrAlphabeticIfEquals(currentWord, nextWord, symbol),message);
+            Assert.assertTrue(isMoreSymbolsOrAlphabeticIfEquals(currentWord, nextWord, symbol), message);
 
         }
     }
 
     @Test
     public void testSortWordsInSentenceBySymbol2() {
-        Sentence actual = textFromData.getParagraphList().getFirst().getSentenceList().getFirst();
+        Sentence sentenceFromData = textFromData.getParagraphList().getFirst().getSentenceList().getFirst();
         char symbol = 'e';
-        textSorter.getSortedWordsInSentenceBySymbol(actual, symbol);
+        Sentence actual = textSorter.getSortedWordsInSentenceBySymbol(sentenceFromData, symbol);
         for (int i = 0; i < actual.getWordList().size() - 1; i++) {
             Word currentWord = actual.getWordList().get(i);
             Word nextWord = actual.getWordList().get(i + 1);
