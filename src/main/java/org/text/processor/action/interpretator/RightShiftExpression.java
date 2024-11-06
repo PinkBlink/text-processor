@@ -27,4 +27,10 @@ public class RightShiftExpression implements Expression {
     public int hashCode() {
         return Objects.hash(leftExpression, rightExpression);
     }
+
+    @Override
+    public String toString() {
+        return "RightExpression :( leftExpression = " + leftExpression + ", rightExpression = " + rightExpression + " )";
+
+    }
 }

@@ -33,7 +33,7 @@ public class ExpressionEvaluator {
     private void mergeAllExpressions() {
         for (int i = TextConstants.MAX_BITWISE_OPERATOR_PRIORITY; i > 0; i--) {
             int indexOfOperator = getFirstIndexOfOperationInPriority(i);
-            while (indexOfOperator != -1) {
+            while (indexOfOperator >= 0) {
                 mergeExceptionWithOperator(indexOfOperator);
                 indexOfOperator = getFirstIndexOfOperationInPriority(i);
             }
@@ -41,16 +41,20 @@ public class ExpressionEvaluator {
     }
 
     private void mergeExceptionWithOperator(int operatorIndex) {
-        if (operatorIndex + TextConstants.STEP == expressionsList.size()) {
+        if (operatorIndex + TextConstants.STEP >= expressionsList.size()) {
             logger.log(Level.ERROR, expressionsList + "<--- Expressions");
             logger.log(Level.ERROR, operatorList + "<--- Operators");
-            throw new IllegalExpressionException("Not enough operand");
+            throw new IllegalExpressionException("Too many operators");
         }
         BitwiseOperator operator = operatorList.get(operatorIndex);
         Expression firstOperand = expressionsList.get(operatorIndex);
         Expression secondOperand = expressionsList.get(operatorIndex + TextConstants.STEP);
         Expression resultExpression = operator.getExpression(firstOperand, secondOperand);
-        expressionsList.remove(operatorIndex + 1);
+
+        String loggerInfoMessage = "Merged expression :[" + firstOperand + " " + operator + " " + secondOperand + "]";
+        logger.log(Level.INFO, loggerInfoMessage);
+
+        expressionsList.remove(operatorIndex + TextConstants.STEP);
         expressionsList.set(operatorIndex, resultExpression);
         operatorList.remove(operatorIndex);
     }
@@ -61,7 +65,8 @@ public class ExpressionEvaluator {
                 .findFirst()
                 .orElse(-1);
     }
-    private boolean isOneExpression(){
+
+    private boolean isOneExpression() {
         return expressionsList.size() == 1;
     }
 }

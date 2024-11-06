@@ -27,4 +27,9 @@ public class XorExpression implements Expression {
     public int hashCode() {
         return Objects.hash(leftExpression, rightExpression);
     }
+
+    @Override
+    public String toString() {
+        return "XorExpression :( leftExpression = " + leftExpression + ", rightExpression = " + rightExpression + " )";
+    }
 }

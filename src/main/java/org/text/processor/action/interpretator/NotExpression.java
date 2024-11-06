@@ -25,4 +25,9 @@ public class NotExpression implements Expression {
     public int hashCode() {
         return Objects.hash(operand);
     }
+
+    @Override
+    public String toString() {
+        return "NotExpression :( " + operand + " )";
+    }
 }

@@ -7,11 +7,10 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.text.processor.entity.Text;
+import org.text.processor.exception.IllegalStringException;
 import org.text.processor.exception.NoFileException;
 import org.text.processor.utils.DataFileReader;
 import org.text.processor.utils.TextUtils;
-
-import java.nio.file.Path;
 
 public class TextParserTests {
     private final Logger logger = LogManager.getLogger(this.getClass());
@@ -76,7 +75,7 @@ public class TextParserTests {
 
     @Test
     public void parserTest4() {
-        Assert.assertThrows(IllegalArgumentException.class, () -> TextUtils.getParsedText(emptyText));
+        Assert.assertThrows(IllegalStringException.class, () -> TextUtils.getParsedText(emptyText));
     }
 
     @Test

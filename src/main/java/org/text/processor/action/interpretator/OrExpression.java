@@ -27,4 +27,9 @@ public class OrExpression implements Expression {
     public int hashCode() {
         return Objects.hash(leftExpression, rightExpression);
     }
+
+    @Override
+    public String toString() {
+        return "OrExpression :( leftExpression = " + leftExpression + ", rightExpression = " + rightExpression + " )";
+    }
 }

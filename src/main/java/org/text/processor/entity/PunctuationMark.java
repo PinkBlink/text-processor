@@ -9,9 +9,10 @@ public class PunctuationMark extends TextSegment {
         this.indexInSentence = indexInSentence;
     }
 
-    public int getIndexInSentence(){
+    public int getIndexInSentence() {
         return indexInSentence;
     }
+
     @Override
     public String getContent() {
         return content;

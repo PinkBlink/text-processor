@@ -40,6 +40,7 @@ public class TextUtils {
         Expression result = expressionEvaluator.getCombinedExpression();
         return result.interpret();
     }
+
     public static Text getParsedText(String text) {
         ParagraphTextParser paragraphTextParser = new ParagraphTextParser();
         SentenceTextParser sentenceTextParser = new SentenceTextParser();
@@ -50,6 +51,7 @@ public class TextUtils {
         paragraphTextParser.parse(actual, text);
         return actual;
     }
+
     public static int getAmountOfSymbolInWord(Word word, char symbol) {
         return (int) word.getContent().chars().filter(s -> s == symbol).count();
     }

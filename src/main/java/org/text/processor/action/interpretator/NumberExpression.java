@@ -16,7 +16,7 @@ public class NumberExpression implements Expression {
 
     @Override
     public String toString() {
-        return "NumberExpression: " + number;
+        return "NumberExpression: ( " + number + " )";
     }
 
     @Override

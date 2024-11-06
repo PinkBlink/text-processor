@@ -5,12 +5,16 @@ import org.text.processor.entity.PunctuationMark;
 import org.text.processor.entity.Sentence;
 import org.text.processor.entity.TextSegment;
 import org.text.processor.entity.Word;
+import org.text.processor.exception.IllegalStringException;
 import org.text.processor.utils.TextUtils;
 import org.text.processor.utils.TextValidator;
 
 public class WordTextParser extends TextParser {
     @Override
     public void parse(TextSegment textSegment, String text) {
+        if (text.isEmpty()) {
+            throw new IllegalStringException("Trying to parse an empty string.");
+        }
         Sentence sentenceSegment = (Sentence) textSegment;
         String[] words = text.split(TextConstants.SPACE_SEPARATOR);
 

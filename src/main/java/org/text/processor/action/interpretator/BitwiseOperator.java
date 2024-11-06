@@ -50,6 +50,7 @@ public enum BitwiseOperator {
     BitwiseOperator(int priority) {
         this.priority = priority;
     }
+
     public static BitwiseOperator getBitwiseOperator(char operator) {
         return switch (operator) {
             case '~' -> BitwiseOperator.NOT;

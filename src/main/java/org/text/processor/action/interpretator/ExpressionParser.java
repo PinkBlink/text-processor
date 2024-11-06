@@ -26,10 +26,12 @@ public class ExpressionParser {
     public void parse(String expression) {
         if (!numberExpressionList.isEmpty()
                 || !operationExpressionsList.isEmpty()) {
+
             numberExpressionList.clear();
             operationExpressionsList.clear();
         }
-        parse(expression, 0);
+        int startIndex = 0;
+        parse(expression, startIndex);
     }
 
     private int parse(String stringExpression, int startIndex) {
@@ -37,6 +39,7 @@ public class ExpressionParser {
         int length = stringExpression.length();
         while (index < length) {
             char currentChar = stringExpression.charAt(index);
+
             if (currentChar == TextConstants.LEFT_BRACKET) {
                 index = parseExpressionInBrackets(stringExpression, index);
                 if (index == length) {
@@ -44,9 +47,11 @@ public class ExpressionParser {
                 }
                 currentChar = stringExpression.charAt(index);
             }
+
             if (currentChar == TextConstants.RIGHT_BRACKET) {
                 return index + TextConstants.STEP;
             }
+
             if (TextValidator.isDigit(currentChar)) {
                 index = addNumberToListWithIndexShift(stringExpression, index);
             } else {
@@ -59,7 +64,9 @@ public class ExpressionParser {
                         index++;
                         addOperationToList(operator);
                     }
-                    case XOR, OR, AND -> addOperationToList(operator);
+                    case XOR, OR, AND -> {
+                        addOperationToList(operator);
+                    }
                 }
                 index++;
             }
@@ -104,9 +111,10 @@ public class ExpressionParser {
     }
 
     private int getNextIndexAfterNumber(int startIndex, String expression) {
-        int endIndex = startIndex + 1;
+        int endIndex = startIndex + TextConstants.STEP;
         while (endIndex < expression.length()
                 && TextValidator.isDigit(expression.charAt(endIndex))) {
+
             endIndex++;
         }
         return endIndex;
@@ -117,8 +125,8 @@ public class ExpressionParser {
         if (TextValidator.isNumber(potentialNumber)) {
             return Integer.parseInt(potentialNumber);
         } else {
+            logger.log(Level.ERROR, "Wrong input for method getNumber :" + potentialNumber);
             throw new IllegalExpressionException("String " + potentialNumber + " is not a number");
         }
     }
 }
-

@@ -1,6 +1,6 @@
 package org.text.processor.exception;
 
-public class IllegalExpressionException extends IllegalArgumentException{
+public class IllegalExpressionException extends IllegalArgumentException {
     public IllegalExpressionException() {
         super();
     }

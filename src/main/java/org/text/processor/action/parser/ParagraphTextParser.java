@@ -4,13 +4,13 @@ import org.text.processor.constants.TextConstants;
 import org.text.processor.entity.Paragraph;
 import org.text.processor.entity.Text;
 import org.text.processor.entity.TextSegment;
-import org.text.processor.exception.IllegalExpressionException;
+import org.text.processor.exception.IllegalStringException;
 
 public class ParagraphTextParser extends TextParser {
     @Override
     public void parse(TextSegment textSegment, String text) {
-        if(text.isEmpty()){
-            throw new IllegalExpressionException("Trying to parse an empty string.");
+        if (text.isEmpty()) {
+            throw new IllegalStringException("Trying to parse an empty string.");
         }
         Text currentTextSegment = (Text) textSegment;
         String[] paragraphs = text.split(TextConstants.LINE_BREAK_SEPARATOR);

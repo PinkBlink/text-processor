@@ -30,7 +30,8 @@ public class TextValidator {
         return !expression.isEmpty()
                 && Pattern.matches(TextConstants.EXPRESSION_REGEX, expression);
     }
-    public static boolean hasPunctuation(String word){
-        return Pattern.matches(TextConstants.PUNCTUATION_REGEX,word);
+
+    public static boolean hasPunctuation(String word) {
+        return Pattern.matches(TextConstants.PUNCTUATION_REGEX, word);
     }
 }
