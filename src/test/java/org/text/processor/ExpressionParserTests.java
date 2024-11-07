@@ -35,7 +35,6 @@ public class ExpressionParserTests {
     public void setUp() {
         parser = new ExpressionParser();
 
-        // Initialize expressions
         expression1 = "11^22|33";
         expression2 = "125^(22|~33123)";
         expression3 = "45&~12|6";
@@ -43,7 +42,6 @@ public class ExpressionParserTests {
         expression5 = "~7&1|9^3";
         expression6 = "8^4|2&~3";
 
-        // Initialize expected results for each expression
         expectedNumbersExpression1 = Arrays.asList(
                 new NumberExpression(11),
                 new NumberExpression(22),

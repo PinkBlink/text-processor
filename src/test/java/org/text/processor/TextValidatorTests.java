@@ -3,6 +3,7 @@ package org.text.processor;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.text.processor.exception.IllegalExpressionException;
 import org.text.processor.utils.TextValidator;
 
 public class TextValidatorTests {
@@ -34,14 +35,18 @@ public class TextValidatorTests {
     }
 
     @Test
-    public void isValidNumberPositive() {
-        Assert.assertTrue(TextValidator.isNumber(validNumberString));
+    public void throwExceptionIfNotNumberPositive() {
+        TextValidator.throwExceptionIfNotNumber(validNumberString);
     }
 
     @Test
-    public void isValidNumberNegative() {
-        Assert.assertFalse(TextValidator.isNumber(invalidNumberString1));
-        Assert.assertFalse(TextValidator.isNumber(invalidNumberString2));
+    public void throwExceptionIfNotNumberNegative1() {
+        Assert.assertThrows(IllegalExpressionException.class, () -> TextValidator.throwExceptionIfNotNumber(invalidNumberString1));
+    }
+
+    @Test
+    public void throwExceptionIfNotNumberNegative2() {
+        Assert.assertThrows(IllegalExpressionException.class, () -> TextValidator.throwExceptionIfNotNumber(invalidNumberString2));
     }
 
     @Test
@@ -65,10 +70,12 @@ public class TextValidatorTests {
     public void hasPunctuation1PositiveTest() {
         Assert.assertTrue(TextValidator.hasPunctuation(validStringPunctuation1));
     }
+
     @Test
     public void hasPunctuation2PositiveTest() {
         Assert.assertTrue(TextValidator.hasPunctuation(validStringPunctuation2));
     }
+
     @Test
     public void hasPunctuation3PositiveTest() {
         Assert.assertTrue(TextValidator.hasPunctuation(validStringPunctuation3));

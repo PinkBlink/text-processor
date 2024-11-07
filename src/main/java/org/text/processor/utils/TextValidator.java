@@ -1,6 +1,7 @@
 package org.text.processor.utils;
 
 import org.text.processor.constants.TextConstants;
+import org.text.processor.exception.IllegalExpressionException;
 
 import java.util.regex.Pattern;
 
@@ -9,9 +10,10 @@ public class TextValidator {
         return Character.isDigit(digit);
     }
 
-    public static boolean isNumber(String string) {
+    public static void throwExceptionIfNotNumber(String string) {
+        IllegalExpressionException exception = new IllegalExpressionException("String  + " + string + " is not a number");
         if (string.isEmpty()) {
-            return false;
+            throw exception;
         }
         for (int i = 0; i < string.length(); i++) {
             char negativeSign = '-';
@@ -20,10 +22,9 @@ public class TextValidator {
                 continue;
             }
             if (!isDigit(currentChar)) {
-                return false;
+                throw exception;
             }
         }
-        return true;
     }
 
     public static boolean isValidExpression(String expression) {

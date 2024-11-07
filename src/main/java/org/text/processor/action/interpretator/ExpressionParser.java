@@ -4,7 +4,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.text.processor.constants.TextConstants;
-import org.text.processor.exception.IllegalExpressionException;
 import org.text.processor.utils.TextValidator;
 
 import java.util.ArrayList;
@@ -12,8 +11,9 @@ import java.util.List;
 
 public class ExpressionParser {
     private final Logger logger = LogManager.getLogger(this.getClass());
-    private List<Expression> numberExpressionList = new ArrayList<>();
-    private List<BitwiseOperator> operationExpressionsList = new ArrayList<>();
+    private final Factory expressionFactory = new ExpressionFactory();
+    private final List<Expression> numberExpressionList = new ArrayList<>();
+    private final List<BitwiseOperator> operationExpressionsList = new ArrayList<>();
 
     public List<Expression> getNumberExpressionList() {
         return numberExpressionList;
@@ -53,24 +53,29 @@ public class ExpressionParser {
             }
 
             if (TextValidator.isDigit(currentChar)) {
-                index = addNumberToListWithIndexShift(stringExpression, index);
+                index = addNumberToListWithIndexShiftIndex(stringExpression, index);
             } else {
-                BitwiseOperator operator = BitwiseOperator.getBitwiseOperator(currentChar);
-                switch (operator) {
-                    case NOT -> {
-                        index = addNotExpressionAndShift(stringExpression, index);
-                    }
-                    case LEFT_SHIFT, RIGHT_SHIFT -> {
-                        index++;
-                        addOperationToList(operator);
-                    }
-                    case XOR, OR, AND -> {
-                        addOperationToList(operator);
-                    }
-                }
-                index++;
+                index = processBinaryOperatorAndShiftIndex(currentChar, index, stringExpression);
             }
         }
+        return index;
+    }
+
+    private int processBinaryOperatorAndShiftIndex(char operatorChar, int index, String stringExpression) {
+        BitwiseOperator operator = BitwiseOperator.getBitwiseOperator(operatorChar);
+        switch (operator) {
+            case NOT -> {
+                index = addNotExpressionAndShift(stringExpression, index);
+            }
+            case LEFT_SHIFT, RIGHT_SHIFT -> {
+                index++;
+                addOperationToList(operator);
+            }
+            case XOR, OR, AND -> {
+                addOperationToList(operator);
+            }
+        }
+        index++;
         return index;
     }
 
@@ -78,9 +83,11 @@ public class ExpressionParser {
         int startNumberIndex = index + TextConstants.STEP;
         int indexAfterNumber = getNextIndexAfterNumber(index, stringExpression);
         int number = getNumber(startNumberIndex, indexAfterNumber, stringExpression);
-        Expression numberExpression = new NumberExpression(number);
-        Expression notExpression = new NotExpression(numberExpression);
+        Expression numberExpression = expressionFactory.createNumberExpression(number);
+        Expression notExpression = expressionFactory.createNotExpression(numberExpression);
         addNumberExpressionToList(notExpression);
+        logger.log(Level.INFO, "add "+ notExpression + "to List;");
+
         return indexAfterNumber - TextConstants.STEP;
     }
 
@@ -91,14 +98,16 @@ public class ExpressionParser {
         ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(subParser);
         Expression bracketExpression = expressionEvaluator.getCombinedExpression();
         addNumberExpressionToList(bracketExpression);
+
         return lastBracketIndex;
     }
 
-    private int addNumberToListWithIndexShift(String stringExpression, int index) {
+    private int addNumberToListWithIndexShiftIndex(String stringExpression, int index) {
         int endIndex = getNextIndexAfterNumber(index, stringExpression);
         int number = getNumber(index, endIndex, stringExpression);
-        Expression numberExpression = new NumberExpression(number);
+        Expression numberExpression = expressionFactory.createNumberExpression(number);
         addNumberExpressionToList(numberExpression);
+        logger.log(Level.INFO, "add "+ numberExpression + "to List;");
         return endIndex;
     }
 
@@ -122,11 +131,7 @@ public class ExpressionParser {
 
     private int getNumber(int fromIndex, int toIndex, String stringExpression) {
         String potentialNumber = stringExpression.substring(fromIndex, toIndex);
-        if (TextValidator.isNumber(potentialNumber)) {
-            return Integer.parseInt(potentialNumber);
-        } else {
-            logger.log(Level.ERROR, "Wrong input for method getNumber :" + potentialNumber);
-            throw new IllegalExpressionException("String " + potentialNumber + " is not a number");
-        }
+        TextValidator.throwExceptionIfNotNumber(potentialNumber);
+        return Integer.parseInt(potentialNumber);
     }
 }

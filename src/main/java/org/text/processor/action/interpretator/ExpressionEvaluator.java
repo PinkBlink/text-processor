@@ -46,10 +46,11 @@ public class ExpressionEvaluator {
             logger.log(Level.ERROR, operatorList + "<--- Operators");
             throw new IllegalExpressionException("Too many operators");
         }
+        Factory expressionFactory = new ExpressionFactory();
         BitwiseOperator operator = operatorList.get(operatorIndex);
         Expression firstOperand = expressionsList.get(operatorIndex);
         Expression secondOperand = expressionsList.get(operatorIndex + TextConstants.STEP);
-        Expression resultExpression = operator.getExpression(firstOperand, secondOperand);
+        Expression resultExpression = expressionFactory.createBitwiseExpression(operator, firstOperand, secondOperand);
 
         String loggerInfoMessage = "Merged expression :[" + firstOperand + " " + operator + " " + secondOperand + "]";
         logger.log(Level.INFO, loggerInfoMessage);

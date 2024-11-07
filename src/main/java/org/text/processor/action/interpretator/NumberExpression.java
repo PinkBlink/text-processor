@@ -21,8 +21,12 @@ public class NumberExpression implements Expression {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof NumberExpression that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof NumberExpression that)) {
+            return false;
+        }
         return number == that.number;
     }
 

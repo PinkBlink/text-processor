@@ -18,8 +18,12 @@ public class XorExpression implements Expression {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof XorExpression that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof XorExpression that)) {
+            return false;
+        }
         return Objects.equals(leftExpression, that.leftExpression) && Objects.equals(rightExpression, that.rightExpression);
     }
 
