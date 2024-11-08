@@ -46,7 +46,7 @@ public class ExpressionEvaluator {
             logger.log(Level.ERROR, operatorList + "<--- Operators");
             throw new IllegalExpressionException("Too many operators");
         }
-        Factory expressionFactory = new ExpressionFactory();
+        ExpressionFactory expressionFactory = new ExpressionFactoryImpl();
         BitwiseOperator operator = operatorList.get(operatorIndex);
         Expression firstOperand = expressionsList.get(operatorIndex);
         Expression secondOperand = expressionsList.get(operatorIndex + TextConstants.STEP);

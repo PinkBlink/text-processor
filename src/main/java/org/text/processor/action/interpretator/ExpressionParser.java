@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ExpressionParser {
     private final Logger logger = LogManager.getLogger(this.getClass());
-    private final Factory expressionFactory = new ExpressionFactory();
+    private final ExpressionFactory expressionFactory = new ExpressionFactoryImpl();
     private final List<Expression> numberExpressionList = new ArrayList<>();
     private final List<BitwiseOperator> operationExpressionsList = new ArrayList<>();
 
